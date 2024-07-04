@@ -1,0 +1,291 @@
+const crypto = require("crypto")
+
+class Game {
+
+    constructor(gameId) {
+
+        this.gameId = gameId
+        this.matrix_table = null
+        this.paylines = null
+        this.payout = null
+        this.volalitiy = null
+        this.paylines = null
+        this.requestedLines = null
+        this.payTable = null
+    }
+
+    /**
+         * game_get_config: databaseden ilgili oyunun datasını çeker
+    * 
+    */
+    async game_get_config() {
+        
+        // bunlar veritabanından gelecek gameId ile config alınacak.
+        console.log("REQUESTED GAME ID:", this.gameId)
+
+        const reels  = [
+            { id: 1, reel: "Orc", probability: 0.2 }, 
+            { id: 2, reel: 'Skull', probability: 0.1 }, 
+            { id: 3, reel: 'Knight', probability: 0.1 }, 
+            { id: 4, reel: 'Archer', probability: 0.1 }, 
+            { id: 5, reel: 'Horse Knight', probability: 0.04}, 
+            { id: 6, reel: "Elite Wild", probability: 0.03 }, 
+            { id: 7, reel: "King", probability: 0.01 }, 
+            { id: 8, reel: "Queen", probability: 0.01 }
+        ];
+
+        // ödeme tablosu
+        const payTable = [
+            
+            { reel:'Orc', payouts: { 3: 10, 2: 5 } },
+            { reel:'Skull', payouts: { 3: 15, 2: 12 } },
+            { reel:'Knight', payouts: { 3: 25, 2: 20 } },
+            { reel:'Archer', payouts: { 3: 27, 2: 21 } },
+            { reel:'Horse Knight', payouts: { 3: 30, 2: 26 } },
+            { reel:'Elite Wild', payouts: { 3: 35 } },
+            { reel:'King', payouts: { 3: 60, 2: 50 } },
+            { reel:'Queen', payouts: { 3: 50, 2: 45 } },
+        ];
+
+
+        // oyunun valalotiysi
+        const volalitiy = "low"
+
+        const paylines = [
+            // Horizontal paylines (Yatay)
+            // 1. satır (olasılıklar)
+            [[0, 0], [0, 1], [0, 2]],
+            [[0, 1], [0, 2], [0, 3]],
+            [[0, 2], [0, 3], [0, 4]],
+            // // // 2. yatay satır olasılıklar
+            [[1, 0], [1, 1], [1, 2]],
+            [[1, 1], [1, 2], [1, 3]],
+            [[1, 2], [1, 3], [1, 4]],
+            // // // 3. yatay satır olasılıklar
+            [[2, 0], [2, 1], [2, 2]],
+            [[2, 1], [2, 2], [2, 3]],
+            [[2, 2], [2, 3], [2, 4]],
+            // Vertical paylines (Dikey)
+            [[0, 0], [1, 0], [2, 0]],
+            [[0, 1], [1, 1], [2, 1]],
+            [[0, 2], [1, 2], [2, 2]],
+            [[0, 3], [1, 3], [2, 3]],
+            [[0, 4], [1, 4], [2, 4]],
+            // çapraz
+            [[0, 0], [1, 1], [2, 2]], 
+            [[0, 2], [1, 1], [2, 0]], 
+            [[0, 2], [1, 3], [2, 4]], 
+            [[0, 4], [1, 3], [2, 2]],
+            //  zigzag
+            [[0, 0], [1, 1], [0, 2]], 
+            [[0, 1], [1, 2], [0, 3]], 
+            [[0, 2], [1, 3], [0, 4]],
+            [[1, 0], [0, 1], [1, 2]], 
+            [[1, 1], [0, 2], [1, 3]], 
+            [[1, 2], [0, 3], [1, 4]],
+            [[2, 0], [1, 1], [2, 2]], 
+            [[2, 1], [1, 2], [2, 3]], 
+            [[2, 2], [1, 3], [2, 4]],
+            [[0, 2], [1, 1], [2, 0]], 
+            [[0, 3], [1, 2], [2, 1]], 
+            [[0, 4], [1, 3], [2, 2]]
+            
+            ]
+
+            // paylinesi dışarı çıkart
+            this.paylines = paylines
+            this.reels = reels
+            this.payTable = payTable
+            this.volalitiy = volalitiy
+    }
+
+
+        /**
+         * generate_game_table: oyunun matrix tablosunu ve linelerini belirler
+         * @param {Number} total_rows - toplam tablo satır
+         * @param {Number} total_cols - toplam tablo sütun
+         * @param {Number} totalLines - toplam kazanma çizgisi
+        */
+        async generate_game_table(total_rows, total_cols, totalLines) {
+        
+        this.requestedLines = totalLines
+
+        // get assets
+        await this.game_get_config()
+
+        this.paylines = this.paylines.slice(0, totalLines)
+
+        const matrix_table = [];
+
+        for (let row = 0; row < total_rows; row++) {
+            matrix_table[row] = [];
+    
+            for (let col = 0; col < total_cols; col++) {
+                // Generate a random index within the range of reels length
+                const card = await this.getRandomReel()
+                // probability'i çıkart
+                // delete card.probability
+                matrix_table[row][col] = { ...card, position: { x: row, y: col } }; // kartın matrix deki pozisyonu
+            }
+        }
+    
+        
+        this.matrix_table = matrix_table
+        return this.calculate_results()
+        
+    }
+
+
+     /**
+         * getRandomReel: oyunun matrix tablosuna RNG ile atanacak parçaları belirler
+    */
+    async getRandomReel() { 
+
+        const totalProbability = this.reels.reduce((sum, reel) => sum + reel.probability, 0);
+
+        switch (this.volalitiy) {
+            case 'low':
+                this.reels = this.reels.map(reel => ({
+                    ...reel,
+                    probability: (reel.probability / totalProbability) * 0.3
+                }));
+                
+                this.payout = 1
+                break;
+
+            case 'medium':
+                this.reels = this.reels.map(reel => ({
+                    ...reel,
+                    probability: reel.probability / totalProbability
+                }));
+                
+                this.payout = 2
+                break;
+
+            case 'high':
+                this.reels = this.reels.map(reel => ({
+                    ...reel,
+                    probability: (reel.probability / totalProbability) * 0.1
+                }));
+    
+                this.payout = 3
+                break;
+
+            default:
+                throw new Error('Unknown volatility level');
+        }
+
+        const RNG = crypto.randomInt(100000) / 100000;
+
+        let chance = 0;
+
+        // parça döndürmeye başla
+        for (const reel of this.reels) {
+            chance += reel.probability;
+            console.log("chance:", chance, "random number:", RNG)
+
+            if (RNG < chance) {
+                console.log("Şans oranı tuttu düşen parça:", reel.reel)
+                return reel;
+            }
+    
+            // tutmazsa rastgele döndür
+            const randomReel = this.reels[Math.floor(Math.random() * this.reels.length)]
+            console.log("Şans oranı tutmadı başka bir parça atılıyor", randomReel.reel)
+
+            return randomReel
+        }
+
+    }
+
+
+
+     /**
+         * calculate_results: oyunun kazanma durumunu belirler
+    */
+    calculate_results() {
+
+        // initials
+
+        let data = { 
+        
+            win: false,
+            payout: this.payout, 
+            winningCards: [],
+            cells: this.matrix_table,
+          
+        }
+
+        for (const line of this.paylines) {
+
+            const symbols = line.map(([row, col]) => this.matrix_table[row][col]);
+
+            if (symbols.includes(undefined)) continue;
+
+            if (symbols.every((symbol) => symbol.reel === symbols[0].reel)) {
+
+                data.win = true
+                // data.payline = line
+                data.winningCards = symbols
+                // data.payout = calculatePayout(symbols, multiplier)
+
+                break
+            }
+        }
+
+
+        return data
+    }
+}
+
+
+/*
+function calculatePayout(winningSymbols, multiplier) {
+    let totalPayout = 0;
+
+    for (const data of payTable) {
+        const { reel, payouts } = data;
+
+        // düşen parça sayısına göre ödeme yap
+        for (const amount in payouts) {
+            if (winningSymbols.filter(symbol => symbol.reel === reel).length === parseInt(amount)) {
+
+                // multiplier oranına göre ödemeyi ayarla
+                payouts[amount] *= multiplier
+                console.log("Ödeme:", payouts[amount])
+
+                totalPayout += payouts[amount];
+            }
+        }
+    }
+
+    return totalPayout;
+}
+
+*/
+
+
+// ocean game
+const testMode = false
+
+if (testMode) {
+
+async function init() {
+
+    const ocean = new Game(12)
+    // 3 x 5 matrix table
+    const res = await ocean.generate_game_table(3, 5)
+
+    console.log(res, "kazanan kartlar", res.winningCards)
+
+}
+
+
+init()
+
+}
+
+
+
+
+module.exports = Game
