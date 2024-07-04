@@ -6,6 +6,8 @@ class Game {
 
         this.gameId = gameId
         this.matrix_table = null
+        this.total_rows = 0
+        this.total_cols = 0
         this.paylines = null
         this.payout = null
         this.volalitiy = null
@@ -108,6 +110,8 @@ class Game {
         */
         async generate_game_table(total_rows, total_cols, totalLines) {
         
+        this.total_rows = total_rows
+        this.total_cols = total_cols
         this.requestedLines = totalLines
 
         // get assets
@@ -117,10 +121,10 @@ class Game {
 
         const matrix_table = [];
 
-        for (let row = 0; row < total_rows; row++) {
+        for (let row = 0; row < this.total_rows; row++) {
             matrix_table[row] = [];
     
-            for (let col = 0; col < total_cols; col++) {
+            for (let col = 0; col < this.total_cols; col++) {
                 // Generate a random index within the range of reels length
                 const card = await this.getRandomReel()
                 // probability'i çıkart
@@ -233,8 +237,28 @@ class Game {
             }
         }
 
+        this.diagram(data)
 
         return data
+    }
+
+
+    diagram(data) {
+
+        const { winningCards } = data
+
+        const diagram = Array.from({ length: this.total_rows }, () => Array(this.total_cols).fill('*'))
+
+        if (winningCards) {
+
+        
+            for (const card of winningCards) {
+                const { x, y } = card.position;
+                diagram[x][y] = 'x';
+            }
+        }
+    
+        console.log(diagram.map(table => table.join(' ')).join('\n'));
     }
 }
 
