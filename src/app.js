@@ -6,6 +6,8 @@ const cors = require("cors")
 
 const app = express()
 const port = process.env["PORT"]
+// our db
+const connectdb = require("./db/connect")
 
 // static 
 app.use(express.static("public"))
@@ -26,10 +28,10 @@ const base_api_path = "/api/v1"
 const adminRouter = require('./admin.routes/admin')
 
 // API Resources
-const oceanAPI = require('./modules/ocean/routes/game')
+const oceanAPI = require('./modules/ocean/routes/spin')
 
-
-
+// db ile bağlantıyı kur
+connectdb()
 
 app.get("/", (req, res) => {
 
@@ -40,6 +42,7 @@ app.get("/", (req, res) => {
 app.use(adminRouter)
 // apis
 app.use(base_api_path, oceanAPI)
+
 
 app.listen(port, () => {
 
