@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+
+    # database service
+    mongo_db:
+      container_name: mongo_db_container
+      image: mongo:latest
+      restart: always
+      volumes:
+        - mongo_db:/data/db
+
+    
+    # node api service
+    node_api:
+        container_name: node_api_container
+        build: 
+            context: .
+        ports:
+          - "4000:3000"
+        environment:
+          PORT: 3000
+          MONGOURI: mongodb://mongo_db:27017
+          DB_NAME: slot_db
+
+        depends_on:
+            - mongo_db
+
+        volumes:
+            - ./src:/usr/src/app/src
+
+volumes:
+    mongo_db: {}
+
