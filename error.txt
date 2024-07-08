@@ -1,0 +1,21 @@
+node_api_container  | Database connection error
+node_api_container  | MongoServerError: Authentication failed.
+node_api_container  |     at Connection.sendCommand (/usr/src/app/node_modules/mongodb/lib/cmap/connection.js:297:27)
+node_api_container  |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+node_api_container  |     at async Connection.command (/usr/src/app/node_modules/mongodb/lib/cmap/connection.js:325:26)
+node_api_container  |     at async executeScram (/usr/src/app/node_modules/mongodb/lib/cmap/auth/scram.js:79:22)
+node_api_container  |     at async ScramSHA1.auth (/usr/src/app/node_modules/mongodb/lib/cmap/auth/scram.js:39:16)
+node_api_container  |     at async performInitialHandshake (/usr/src/app/node_modules/mongodb/lib/cmap/connect.js:101:13)
+node_api_container  |     at async connect (/usr/src/app/node_modules/mongodb/lib/cmap/connect.js:19:9) {
+node_api_container  |   errorResponse: {
+node_api_container  |     ok: 0,
+node_api_container  |     errmsg: 'Authentication failed.',
+node_api_container  |     code: 18,
+node_api_container  |     codeName: 'AuthenticationFailed'
+node_api_container  |   },
+node_api_container  |   ok: 0,
+node_api_container  |   code: 18,
+node_api_container  |   codeName: 'AuthenticationFailed',
+node_api_container  |   connectionGeneration: 4,
+node_api_container  |   [Symbol(errorLabels)]: Set(2) { 'HandshakeError', 'ResetPool' }
+node_api_container  | }
