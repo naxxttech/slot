@@ -1,4 +1,5 @@
 require('module-alias/register')
+require('dotenv').config()
 
 const express = require("express")
 const expressLayouts = require('express-ejs-layouts')
@@ -16,7 +17,8 @@ app.use("/css", express.static(__dirname + "public/css"))
 // middlewares
 app.use(cors())
 app.use(expressLayouts)
-
+// parser
+app.use(express.json())
 // view
 app.set("view engine", "ejs")
 app.set("layout", "./layouts/base")
@@ -39,7 +41,7 @@ app.get("/", (req, res) => {
 })
 
 // routers
-app.use(adminRouter)
+app.use("/admin", adminRouter)
 // apis
 app.use(base_api_path, oceanAPI)
 
