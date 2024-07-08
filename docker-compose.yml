@@ -1,7 +1,6 @@
 version: "3.9"
 
 services:
-
     # database service
     mongo_db:
       container_name: mongo_db_container
@@ -12,18 +11,24 @@ services:
       volumes:
         - mongo_db:/data/db
 
+
     
     # node api service
     node_api:
         container_name: node_api_container
         build: 
             context: .
-        ports:
+        ports: 
           - "4000:3000"
         environment:
           PORT: 3000
-          MONGOURI: mongodb://mongo_db:27017
-          DB_NAME: slot_db
+          DB_HOST: mongo_db
+          DB_PORT: 27017
+          DB_COLLECTION: slot
+          MONGO_INITDB_ROOT_USERNAME: admin
+          MONGO_INITDB_ROOT_PASSWORD: adminx
+          MONGO_INITDB_DATABASE: slotdb
+          
 
         depends_on:
             - mongo_db
