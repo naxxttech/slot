@@ -1,13 +1,13 @@
 const express = require("express")
 const router = express.Router()
-const GameSchema = require("../db/models/GameSchema")
+const { getAllGames, getGameById, create_new_game } = require("../db/models/GameSchema")
 
 router.get("/", async (request, response) => {
-    console.log("TETİK GET")
-    const context = {}
-    const Games = await GameSchema.find()
 
-    context.games = Games
+    const context = {}
+    const games_object = await getAllGames()
+
+    context.games = games_object.resource
 
     response.render("admin/index", { title: "Admin Dashboard", data: context})
 })
@@ -17,16 +17,9 @@ router.get("/", async (request, response) => {
 router.get("/resource/all", async (request, response) => {
 
 
-    try {
+        const games_object = await getAllGames()
 
-        const games = await GameSchema.find()
-        return response.status(200).json(games)
-        
-    } catch (error) {
-
-        console.log("[ALL GAMES] Error", error)
-        return response.status(500).json({ message: "Something went wrong please try again in 5 minutes."})
-    }
+        return response.status(games_object.code).json(games_object)
 
 })
 
@@ -34,24 +27,9 @@ router.get("/resource/get/:gameId", async (request, response) => {
 
     const { gameId } = request.params 
 
-    
-    try {
+    const game_object = await getGameById(gameId)
 
-        const game = await GameSchema.findOne({ gameId })
-
-        if (game === null) {
-
-            return response.status(404).json({ message: "Could not find requested resource."})
-        }
-
-        return response.status(200).json(game)
-    
-    } catch (error) {
-
-        console.log("[GET GAME] Error", error)
-        return response.status(500).json({ message: "Something went wrong please try again in 5 minutes."})
-    
-    }
+    return response.status(game_object.code).json(game_object)
 
 })
 
@@ -61,20 +39,9 @@ router.post("/resource/create/new/game", async (request, response) => {
 
     const { gameName, rows, cols, reels } = request.body
 
-    const gameId = Math.floor(Math.random() * 2341213)
+    const game_object = await create_new_game(request.body)
 
-   
-
-    try {
-
-        const new_game = await GameSchema.create({ gameId, gameName, rows, cols, reels})
-        return response.status(201).json(new_game)
-
-    } catch (error) {
-
-        console.log("[CREATE GAME] Error", error)
-        return response.status(500).json({ message: "Something went wrong while creating resource please try again in 5 minutes."})
-    }
+    return response.status(game_object.code).json(game_object)
 
    
 })

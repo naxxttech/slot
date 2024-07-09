@@ -1,4 +1,5 @@
 const crypto = require("crypto")
+const { getGameById } = require('../db/models/GameSchema')
 
 class Game {
 
@@ -24,6 +25,10 @@ class Game {
         
         // bunlar veritabanından gelecek gameId ile config alınacak.
         console.log("REQUESTED GAME ID:", this.gameId)
+
+        // dbden tüm parçaları, dataları çek.
+        const game_source = await getGameById(this.gameId)
+        console.log("game source:", game_source)
 
         const reels  = [
             { id: 1, reel: "Orc", probability: 0.2 }, 
