@@ -28,13 +28,25 @@ services:
           MONGO_INITDB_ROOT_USERNAME: admin
           MONGO_INITDB_ROOT_PASSWORD: adminx
           MONGO_INITDB_DATABASE: slotdb
-          
+          URI: "mongodb+srv://admin:adminx@cluster0.gmmajjo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
         depends_on:
             - mongo_db
 
         volumes:
             - ./src:/usr/src/app/src
+
+
+    nginx:
+      container_name: nginx_container
+      image: nginx:latest
+      ports:
+        - "80:80"
+      volumes:
+        - ./nginx.conf:/etc/nginx/nginx.conf
+      depends_on:
+        - node_api
+
 
 volumes:
     mongo_db: {}
