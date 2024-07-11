@@ -1,0 +1,69 @@
+
+
+<% if (data.game.resource != null) { %>
+    
+
+
+<div class="d-flex align-items-center">
+    <h1><%= data.game.resource.gameName %></h1>
+    <button class="ms-auto btn btn-danger">Delete</button>
+</div>
+
+<hr>
+
+
+
+
+<% if (data.game.code != 200) { %>
+ 
+        <p class="text-danger">* <%= data.game.message %></p>
+<% } %>
+
+
+<form action="/admin/resource/get/<%=data.game.resource.gameId %>/set/items" method="post">
+
+
+    <div class="row mt-3">
+
+        <div class="col-12">
+
+            <div class="mb-3">
+                <label for="instance_id" class="form-label">Instance ID</label>
+                <input type="text" class="form-control" id="instance_id" disabled value="<%= data.game.resource._id %>">
+            </div>
+
+            <div class="mb-3">
+                <label for="game_name" class="form-label">Game Name</label>
+                <input type="text" class="form-control" id="game_name" name="gameName" placeholder="Game Name" value="<%= data.game.resource.gameName %>">
+            </div>
+
+            <div class="mb-3">
+                <label for="game_volalitiy" class="form-label">Game volalitiy</label>
+                <input type="text" class="form-control" id="game_volalitiy" name="volalitiy" placeholder="Game Volalitiy" value="<%= data.game.resource.volalitiy %>">
+            </div>
+
+            
+            <div class="mb-3">
+                <!-- todo: pay table -->
+                <label for="game_volalitiy" class="form-label">Pay Table</label>
+                <input type="text" class="form-control" id="game_paytable" name="paytable" placeholder="Pay Table" value="">
+            </div>
+
+
+            <input type="hidden" name="gameId" value="<%= data.game.resource.gameId %>">
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-success">Save</button>
+            </div>
+        </div>
+
+        
+    </div>
+
+</form>
+
+<% } else { %>
+
+    <p class="text-danger">Requested source is not found.</p>
+
+<% } %>
