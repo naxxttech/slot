@@ -9,11 +9,16 @@ const GameSchema = new Schema({
     lines: { type: [[Number]] },  // Array of arrays representing paylines
     rows: { type: Number, default: 5},
     cols: { type: Number, default: 3},
-    reels: [{
-               id: { type: Number, required: true },
-               name: { type: String, required: true }
-            }]
-
+    reels: [
+             { 
+                id: { type: Number, required: true }, 
+                name: { type: String, required: true },
+                // şans oranı varsayılan olarak %50
+                probability: { type: String, default: "0.5"}
+             }
+    ],
+    // validation for vol: high, medium
+    volalitiy: { type: String, default: "low"}
 }, {
 
     timestamps: true
@@ -24,7 +29,10 @@ const GameSchema = new Schema({
 const model = mongoose.model('Game', GameSchema);
 
 
+
 // methods
+
+/** Gets all games. */
 const getAllGames = async () => {
 
     const data = {
@@ -52,8 +60,11 @@ const getAllGames = async () => {
     return data
 }
 
-
-const getGameById = async (gameId = String()) => {
+/**
+* Gets requested game resource.
+* @param {number} gameId - The game ID.
+*/
+const getGameById = async (gameId) => {
 
 
 
@@ -61,7 +72,7 @@ const getGameById = async (gameId = String()) => {
 
         code: 200,
         message: "",
-        resource: null || {}
+        resource: null
     }
 
     if (!gameId) {
@@ -98,15 +109,28 @@ const getGameById = async (gameId = String()) => {
     return init
 }
 
+/**
+ * @typedef {Object} Reel
+ * @property {number} id - The ID of the reel.
+ * @property {string} name - The name of the reel.
+ * @property {string} probability - The probability rate of the reel. Default is 0.5
+ */
 
-
-const create_new_game = async (gameData = { rows: Number(), cols: Number(), reels: [{id: Number(), name: String()}] }) => {
+/**
+ * Creates a new game.
+ * @param {Object} gameData - The game data.
+ * @param {number} gameData.rows - The number of rows in the game.
+ * @param {number} gameData.cols - The number of columns in the game.
+ * @param {Array<Reel>} gameData.reels - The reels data accepts two params id and name
+ * @returns {Object} an object that contains success result data or not
+ */
+const create_new_game = async (gameData = { rows, cols, reels: [] }) => {
 
     const init_data = {
 
         code: 400,
         message: "",
-        resource: null || {}
+        resource:{}
     }
 
 
@@ -156,6 +180,47 @@ const create_new_game = async (gameData = { rows: Number(), cols: Number(), reel
     return init_data
 }
 
+/**
+* Sets the volatility of the resource.
+* @param {model} resource - The Mongoose schema.
+* @param {string} new_volatility - The new volatility value low | medium | high.
+* @returns {object | null}
+*/
+const update_game = async (new_entries) => {
 
+    console.log("[update_game] entries:", new_entries)
 
-module.exports = { getAllGames, getGameById, create_new_game, model: GameSchema }
+    const init_data = {
+
+        code: 201,
+        message: "",
+        resource: null
+    }
+
+    // add paytable validation later
+    const { gameId, gameName, volalitiy, paytable } = new_entries
+
+    if (!gameName || !volalitiy) {
+
+        init_data.code = 400
+        init_data.message = "All fields must be filled."
+        return init_data
+    }
+
+    if (!["low", "medium", "high"].includes(volalitiy)) {
+
+        init_data.code = 400
+        init_data.message = "Provided volality is not valid"
+        return init_data
+    }
+
+     const new_doc = await model.findOneAndUpdate({ gameId: gameId}, new_entries, { new: true })
+   
+
+    init_data.message = "Succesfully updated"
+    init_data.resource = new_doc
+
+    return init_data
+}
+
+module.exports = { getAllGames, getGameById, create_new_game, update_game, model: GameSchema }
