@@ -28,7 +28,7 @@ class Game {
 
         // dbden tüm parçaları, dataları çek.
         const game_source = await getGameById(this.gameId)
-        console.log("game source:", game_source)
+        console.log("game source:", game_source, "\nGame Reels:", game_source.resource.reels)
 
         const reels  = [
             { id: 1, reel: "Orc", probability: 0.2 }, 
@@ -134,7 +134,7 @@ class Game {
                 const card = await this.getRandomReel()
                 // probability'i çıkart
                 // delete card.probability
-                matrix_table[row][col] = { ...card, position: { x: row, y: col } }; // kartın matrix deki pozisyonu
+                matrix_table[row][col] = {...card, position: { line: row, x: row + 1, y: col + 1 } }; // kartın matrix deki pozisyonu
             }
         }
     
@@ -156,7 +156,7 @@ class Game {
             case 'low':
                 this.reels = this.reels.map(reel => ({
                     ...reel,
-                    probability: (reel.probability / totalProbability) * 0.3
+                    probability: (reel.probability / totalProbability) * 0.6
                 }));
                 
                 this.payout = 1
@@ -230,7 +230,7 @@ class Game {
             const symbols = line.map(([row, col]) => this.matrix_table[row][col]);
 
             if (symbols.includes(undefined)) continue;
-
+        
             if (symbols.every((symbol) => symbol.reel === symbols[0].reel)) {
 
                 data.win = true
@@ -244,7 +244,14 @@ class Game {
 
         this.diagram(data)
 
+        // restructure
         return data
+    }
+
+
+    async calculatePayout(data) {
+        // win oranı ve volality ve kard kombinasyonları baz alınarak ödeme yapılacak, balance için 
+        // kuvvetli ihtimal operator API ile iletişim kurulacak
     }
 
 
@@ -259,7 +266,7 @@ class Game {
         
             for (const card of winningCards) {
                 const { x, y } = card.position;
-                diagram[x][y] = 'x';
+                diagram[x -1][y - 1] = 'x';
             }
         }
     
@@ -268,51 +275,10 @@ class Game {
 }
 
 
-/*
-function calculatePayout(winningSymbols, multiplier) {
-    let totalPayout = 0;
-
-    for (const data of payTable) {
-        const { reel, payouts } = data;
-
-        // düşen parça sayısına göre ödeme yap
-        for (const amount in payouts) {
-            if (winningSymbols.filter(symbol => symbol.reel === reel).length === parseInt(amount)) {
-
-                // multiplier oranına göre ödemeyi ayarla
-                payouts[amount] *= multiplier
-                console.log("Ödeme:", payouts[amount])
-
-                totalPayout += payouts[amount];
-            }
-        }
-    }
-
-    return totalPayout;
-}
-
-*/
 
 
-// ocean game
-const testMode = false
-
-if (testMode) {
-
-async function init() {
-
-    const ocean = new Game(12)
-    // 3 x 5 matrix table
-    const res = await ocean.generate_game_table(3, 5)
-
-    console.log(res, "kazanan kartlar", res.winningCards)
-
-}
 
 
-init()
-
-}
 
 
 
