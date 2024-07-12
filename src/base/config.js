@@ -31,14 +31,19 @@ class Game {
         console.log("game source:", game_source, "\nGame Reels:", game_source.resource.reels)
 
         const reels  = [
-            { id: 1, reel: "Orc", probability: 0.2 }, 
-            { id: 2, reel: 'Skull', probability: 0.1 }, 
-            { id: 3, reel: 'Knight', probability: 0.1 }, 
-            { id: 4, reel: 'Archer', probability: 0.1 }, 
-            { id: 5, reel: 'Horse Knight', probability: 0.04}, 
-            { id: 6, reel: "Elite Wild", probability: 0.03 }, 
-            { id: 7, reel: "King", probability: 0.01 }, 
-            { id: 8, reel: "Queen", probability: 0.01 }
+            { id: 0, reel: "ACE", probability: 0.2 }, 
+            { id: 1, reel: "ANCHOR", probability: 0.2 }, 
+            { id: 2, reel: 'FISH', probability: 0.1 }, 
+            { id: 3, reel: 'HORSE', probability: 0.1 }, 
+            { id: 4, reel: 'JACK', probability: 0.1 }, 
+            { id: 5, reel: 'KING', probability: 0.04}, 
+            { id: 6, reel: "NINE", probability: 0.03 }, 
+            { id: 7, reel: "QUEEN", probability: 0.01 }, 
+            { id: 8, reel: "SCATTER", probability: 0.01 },
+            { id: 9, reel: "SHELL", probability: 0.01 },
+            { id: 10, reel: "STAR", probability: 0.01 },
+            { id: 11, reel: "TEN", probability: 0.01 },
+            { id: 12, reel: "WILD", probability: 0.01 }
         ];
 
         // ödeme tablosu
@@ -57,7 +62,7 @@ class Game {
 
         // oyunun valalotiysi
         const volalitiy = "low"
-
+        /*
         const paylines = [
             // Horizontal paylines (Yatay)
             // 1. satır (olasılıklar)
@@ -99,6 +104,61 @@ class Game {
             
             ]
 
+            */
+            const paylines = [
+
+               // 1
+               [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]],
+        
+               [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4]],
+
+               [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4]],
+
+               [[0, 0], [1, 1], [2, 3], [1, 3], [0, 4]],
+       
+               [[0, 2], [1, 1], [1, 3], [2, 0], [2, 4]],
+
+               [[0, 0], [0, 1], [1, 2], [0, 3], [0, 4]],
+
+               [[1, 2], [2, 0], [2, 1], [2, 3], [2, 4]],
+  
+               [[1, 0], [0, 1], [0, 2], [0, 3], [1, 4]],
+
+               [[1, 0], [2, 1], [2, 2], [2, 3], [1, 4]],
+               // 10
+               [[1, 0], [1, 1], [0, 2], [1, 3], [1, 4]],
+
+               [[1, 0], [1, 1], [2, 2], [1, 3], [1, 4]],
+
+               [[0, 0], [0, 1], [1, 2], [2, 3], [2, 4]],
+
+               [[2, 0], [2, 1], [1, 3], [0, 3], [0, 4]],
+
+               [[0, 1], [1, 0], [1, 2], [2, 3], [1, 4]],
+               // 15
+               [[1, 0], [2, 1], [1, 2], [0, 3], [1, 4]],
+               
+               [[0, 0], [1, 1], [1, 2], [1, 3], [2, 4]],
+
+               [[2, 0], [1, 1], [1, 2], [1, 3], [0, 4]],
+
+               [[1, 0], [0, 1], [0, 2], [1, 3], [2, 4]],
+
+               [[1, 0], [2, 1], [2, 2], [1, 3], [0, 4]],
+               // 20
+               [[0, 0], [2, 1], [0, 3], [2, 3], [0, 4]],
+
+               [[2, 0], [0, 1], [2, 2], [0, 3], [2, 4]],
+
+               [[0, 0], [0, 1], [1, 2], [2, 3], [1, 4]],
+
+               [[2, 0], [2, 1], [1, 2], [0, 3], [1, 4]],
+
+               [[1, 0], [1, 1], [0, 2], [1, 3], [2, 4]],
+               // 25
+               [[1, 0], [1, 1], [2, 2], [1, 3], [0, 4]],
+
+            ]
             // paylinesi dışarı çıkart
             this.paylines = paylines
             this.reels = reels
@@ -134,7 +194,8 @@ class Game {
                 const card = await this.getRandomReel()
                 // probability'i çıkart
                 // delete card.probability
-                matrix_table[row][col] = {...card, position: { line: row, x: row + 1, y: col + 1 } }; // kartın matrix deki pozisyonu
+                // matrix_table[row][col] = {...card, position: { line: row, x: row + 1, y: col + 1 } }; 
+                matrix_table[row][col] = { line: row, cordinate: { x: row, y: col}, cardId: card.id}
             }
         }
     
@@ -156,7 +217,7 @@ class Game {
             case 'low':
                 this.reels = this.reels.map(reel => ({
                     ...reel,
-                    probability: (reel.probability / totalProbability) * 0.6
+                    probability: (reel.probability / totalProbability) * 0.5
                 }));
                 
                 this.payout = 1
@@ -194,7 +255,7 @@ class Game {
             console.log("chance:", chance, "random number:", RNG)
 
             if (RNG < chance) {
-                console.log("Şans oranı tuttu düşen parça:", reel.reel)
+                console.log("Şans oranı tuttu düşen parça:", reel)
                 return reel;
             }
     
@@ -220,33 +281,117 @@ class Game {
         
             win: false,
             payout: this.payout, 
-            winningCards: [],
-            cells: this.matrix_table,
+            winningPaylines: [],
+            cells: [],
           
         }
 
+        // restrucute object
+
         for (const line of this.paylines) {
 
-            const symbols = line.map(([row, col]) => this.matrix_table[row][col]);
+            let symbols = line.map(([row, col]) => this.matrix_table[row][col]);
 
+            
             if (symbols.includes(undefined)) continue;
         
-            if (symbols.every((symbol) => symbol.reel === symbols[0].reel)) {
+
+            let cardCount = {}
+            
+            for (let symbol of symbols) {
+
+                if (!cardCount[symbol.cardId]) {
+                    cardCount[symbol.cardId] = 0;
+                }
+
+                cardCount[symbol.cardId]++;
+            }
+
+            for (let cardId in cardCount) {
+
+
+                if (cardCount[cardId] >= 3) {
+
+                    data.win = true;
+
+                    const table = []
+
+                            symbols.forEach(symbol => {
+
+                                const cardId = symbol.cardId;
+                                const x = symbol.cordinate.x;
+                                const y = symbol.cordinate.y;
+                                
+                                const row = table.find(data => data.line === symbol.line)
+
+                                if (row) {
+
+                                    row.cards.push({ cardId, x, y})
+                                
+                                } else {
+
+                                    table.push({ line: symbol.line, cards: [{ cardId, x, y }]})
+                                }
+                                
+                            });
+
+
+                     data.winningPaylines = table
+                }
+            }
+
+
+
+        /*
+            if (symbols.every((symbol) => symbol.cardId === symbols[0].cardId)) {
 
                 data.win = true
                 // data.payline = line
-                data.winningCards = symbols
-                // data.payout = calculatePayout(symbols, multiplier)
 
+                console.log("veri:", symbols)
+        
+                const table = []
+
+                symbols.forEach(symbol => {
+
+                    const cardId = symbol.cardId;
+                    const x = symbol.cordinate.x;
+                    const y = symbol.cordinate.y;
+                    
+                    const row = table.find(data => data.line === symbol.line)
+
+                    if (row) {
+
+                        row.cards.push({ cardId, x, y})
+                    
+                    } else {
+
+                        table.push({ line: symbol.line, cards: [{ cardId, x, y }]})
+                    }
+                    
+                });
+
+                data.winningPaylines = table
+                
+                // data.payout = calculatePayout(symbols, multiplier)
                 break
             }
+          */
         }
 
+   
         this.diagram(data)
 
-        // restructure
+        // restructure response data for cells key
+        for (const rows of this.matrix_table) {
+
+            data.cells.push(rows.map(object => object.cardId))            
+        }
+
+
         return data
     }
+
 
 
     async calculatePayout(data) {
@@ -257,17 +402,17 @@ class Game {
 
     diagram(data) {
 
+        return null
+        
         const { winningCards } = data
 
         const diagram = Array.from({ length: this.total_rows }, () => Array(this.total_cols).fill('*'))
 
-        if (winningCards) {
-
-        
-            for (const card of winningCards) {
-                const { x, y } = card.position;
-                diagram[x -1][y - 1] = 'x';
-            }
+        if (winningCards.length) {
+                
+            // array data
+            // diagram[x][y] = 'x';
+            
         }
     
         console.log(diagram.map(table => table.join(' ')).join('\n'));
