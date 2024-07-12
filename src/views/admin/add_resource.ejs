@@ -34,6 +34,16 @@
                     <input type="text" class="form-control" id="game_paytable" name="paytable" placeholder="Pay Table" value="">
                 </div>
     
+                <div class="mb-3" id="game-cards">
+                    <label class="form-label">Game Cards</label>
+                    <input type="text" class="mb-3 form-control" name="card-1" placeholder="Symbol Name" value="">
+                
+                </div>
+                
+                <div class="text-end">
+                    <button onclick="generateNewSymbol()" type="button" class="btn btn-link">Add Symbol</button>
+
+                </div>
     
                 <div class="mt-4">
                     <button type="submit" class="btn btn-success">Create Game</button>
@@ -45,3 +55,21 @@
     
     </form>
     
+
+    <script>
+
+        function generateNewSymbol() {
+
+            const container = document.getElementById("game-cards")
+            const inputCount = document.querySelectorAll("#game-cards input").length
+            
+            const input = document.createElement("input")
+            input.classList.add("mb-3", "form-control")
+            input.placeholder = "Symbol Name"
+            input.name = `card-${inputCount + 1}`
+            input.id = `card-${inputCount + 1}`
+
+            container.appendChild(input)
+        }
+
+    </script>
