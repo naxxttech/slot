@@ -83,12 +83,14 @@ const spin = (gameId) => {
 
     const test_user = {
         
-        name: "ömer",
-        requestedLines: 23,
+        requestedLines: 5,
         gameId: gameId
 
     }
-    socket.emit("spin", (test_user))
+    socket.emit("spin", test_user, (args) => {
+
+        console.log("args:", args)
+    })
 
 }
 
