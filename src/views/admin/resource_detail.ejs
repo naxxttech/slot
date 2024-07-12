@@ -67,3 +67,33 @@
     <p class="text-danger">Requested source is not found.</p>
 
 <% } %>
+
+
+
+<div class="mt-3">
+
+    <button onclick="spin('<%=data.game.resource.gameId%>')" class="btn btn-success">Test Spin</button>
+</div>
+
+
+
+<script>
+
+const spin = (gameId) => {
+
+    const test_user = {
+        
+        name: "ömer",
+        requestedLines: 23,
+        gameId: gameId
+
+    }
+    socket.emit("spin", (test_user))
+
+}
+
+
+
+
+
+</script>
