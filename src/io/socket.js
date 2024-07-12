@@ -19,15 +19,16 @@ const initializeSocket = (server) => {
             console.log(`[${socket.id}] -`, "User just connected")
 
 
-            socket.on("spin", async (data) => {
+            socket.on("spin", async (data, cb) => {
 
                 console.log("SPIN RECEIVED:", data)
-                
+
                 const { requestedLines } = data
                 const requested_game = new Game(data.gameId)
                 const game_data = await requested_game.generate_game_table(3, 5, requestedLines)
 
-                socket.emit("result", game_data)
+                cb?.(game_data)
+
             })
 
             socket.on("disconnect", () => {
@@ -40,7 +41,6 @@ const initializeSocket = (server) => {
 
 
 }
-
 
 
 module.exports = initializeSocket
