@@ -28,7 +28,8 @@ class Game {
 
         // dbden tüm parçaları, dataları çek.
         const game_source = await getGameById(this.gameId)
-        console.log("game source:", game_source, "\nGame Reels:", game_source.resource.reels)
+
+        // console.log("game source:", game_source, "\nGame Reels:", game_source?.resource?.reels)
 
         const reels  = [
             { id: 0, reel: "ACE", probability: 0.2 }, 
@@ -62,49 +63,7 @@ class Game {
 
         // oyunun valalotiysi
         const volalitiy = "low"
-        /*
-        const paylines = [
-            // Horizontal paylines (Yatay)
-            // 1. satır (olasılıklar)
-            [[0, 0], [0, 1], [0, 2]],
-            [[0, 1], [0, 2], [0, 3]],
-            [[0, 2], [0, 3], [0, 4]],
-            // // // 2. yatay satır olasılıklar
-            [[1, 0], [1, 1], [1, 2]],
-            [[1, 1], [1, 2], [1, 3]],
-            [[1, 2], [1, 3], [1, 4]],
-            // // // 3. yatay satır olasılıklar
-            [[2, 0], [2, 1], [2, 2]],
-            [[2, 1], [2, 2], [2, 3]],
-            [[2, 2], [2, 3], [2, 4]],
-            // Vertical paylines (Dikey)
-            [[0, 0], [1, 0], [2, 0]],
-            [[0, 1], [1, 1], [2, 1]],
-            [[0, 2], [1, 2], [2, 2]],
-            [[0, 3], [1, 3], [2, 3]],
-            [[0, 4], [1, 4], [2, 4]],
-            // çapraz
-            [[0, 0], [1, 1], [2, 2]], 
-            [[0, 2], [1, 1], [2, 0]], 
-            [[0, 2], [1, 3], [2, 4]], 
-            [[0, 4], [1, 3], [2, 2]],
-            //  zigzag
-            [[0, 0], [1, 1], [0, 2]], 
-            [[0, 1], [1, 2], [0, 3]], 
-            [[0, 2], [1, 3], [0, 4]],
-            [[1, 0], [0, 1], [1, 2]], 
-            [[1, 1], [0, 2], [1, 3]], 
-            [[1, 2], [0, 3], [1, 4]],
-            [[2, 0], [1, 1], [2, 2]], 
-            [[2, 1], [1, 2], [2, 3]], 
-            [[2, 2], [1, 3], [2, 4]],
-            [[0, 2], [1, 1], [2, 0]], 
-            [[0, 3], [1, 2], [2, 1]], 
-            [[0, 4], [1, 3], [2, 2]]
-            
-            ]
-
-            */
+        
             const paylines = [
 
                // 1
@@ -173,7 +132,7 @@ class Game {
          * @param {Number} total_cols - toplam tablo sütun
          * @param {Number} totalLines - toplam kazanma çizgisi
         */
-        async generate_game_table(total_rows, total_cols, totalLines) {
+        async generate_game_table(totalLines) {
         
         this.total_rows = total_rows
         this.total_cols = total_cols
@@ -341,48 +300,10 @@ class Game {
                      data.winningPaylines = table
                 }
             }
-
-
-
-        /*
-            if (symbols.every((symbol) => symbol.cardId === symbols[0].cardId)) {
-
-                data.win = true
-                // data.payline = line
-
-                console.log("veri:", symbols)
-        
-                const table = []
-
-                symbols.forEach(symbol => {
-
-                    const cardId = symbol.cardId;
-                    const x = symbol.cordinate.x;
-                    const y = symbol.cordinate.y;
-                    
-                    const row = table.find(data => data.line === symbol.line)
-
-                    if (row) {
-
-                        row.cards.push({ cardId, x, y})
-                    
-                    } else {
-
-                        table.push({ line: symbol.line, cards: [{ cardId, x, y }]})
-                    }
-                    
-                });
-
-                data.winningPaylines = table
-                
-                // data.payout = calculatePayout(symbols, multiplier)
-                break
-            }
-          */
         }
 
-   
-        this.diagram(data)
+
+        console.log("CEEELS:", data)
 
         // restructure response data for cells key
         for (const rows of this.matrix_table) {
@@ -394,31 +315,6 @@ class Game {
         return data
     }
 
-
-
-    async calculatePayout(data) {
-        // win oranı ve volality ve kard kombinasyonları baz alınarak ödeme yapılacak, balance için 
-        // kuvvetli ihtimal operator API ile iletişim kurulacak
-    }
-
-
-    diagram(data) {
-
-        return null
-        
-        const { winningCards } = data
-
-        const diagram = Array.from({ length: this.total_rows }, () => Array(this.total_cols).fill('*'))
-
-        if (winningCards.length) {
-                
-            // array data
-            // diagram[x][y] = 'x';
-            
-        }
-    
-        console.log(diagram.map(table => table.join(' ')).join('\n'));
-    }
 }
 
 
