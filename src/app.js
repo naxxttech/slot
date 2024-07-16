@@ -1,40 +1,36 @@
 require('module-alias/register')
 require('dotenv').config()
 
-const { server } = require("./application/index")
-const port = process.env["PORT"]
+const { server, application_status } = require("./application/index")
 const ngrok = require("ngrok")
-
 // our db
 const connectdb = require("./db/connect")
 // our socket
 const createSocket = require("./io/socket")
 
 
-const base_api_path = "/api/v1"
+const { port, base_api_path, prefix, developmentMode } = application_status
 
-/*
-// Routes
-const adminRouter = require('./admin.routes/admin')
-// API Resources
-const oceanAPI = require('./modules/ocean/routes/spin')
+const cmd_info = {
+
+    homeRefeerer: `Server running on http://localhost:${port}/`,
+    api: `API located at http://localhost:${port}/${base_api_path}/<query_path>`,
+    dashboard: `Admin dashboard: http://localhost:${port}/admin`
+}
+
+const cmd_logs = [cmd_info.homeRefeerer, cmd_info.api, cmd_info.dashboard]
+
+if (developmentMode === "development") {
 
 
+    cmd_info.api = `API located at http://localhost:${port}/${prefix}/<query_path>`
+    cmd_info.dashboard = `Admin dashboard: http://localhost:${port}/${prefix}/admin`
+}
 
-// routers
-app.use("/admin", adminRouter)
-// apis
-app.use(base_api_path, oceanAPI)
-
-*/
-
-const developmentMode = process.env["NODE_ENV"]
 
 server.listen(port, () => {
 
-    console.log(`Server running on http://localhost:${port}/`)
-    console.log(`API located at http://localhost:${port}${base_api_path}/<query_path>`)
-    console.log(`Admin dashboard: http://localhost:${port}/admin`)
+    console.log(cmd_logs.join("\n"))
 
     // start socket
     createSocket(server)

@@ -25,7 +25,23 @@ app.set("layout", "./layouts/base")
 app.set("views", path.join(__dirname, '../views'));
 
 
-// group routes
-configureRoutes(app)
+// regular config
+const port = process.env["PORT"]
+const developmentMode = process.env["NODE_ENV"]
+const prefix = process.env.prefix || '';
+const base_api_path = "api/v1"
 
-module.exports = { server }
+
+const application_status = {
+
+    developmentMode,
+    prefix,
+    base_api_path,
+    port
+}
+
+// group routes
+configureRoutes(app, prefix)
+
+
+module.exports = { server, application_status }
