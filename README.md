@@ -6,10 +6,11 @@ This README file provides instructions for cloning and running the **Slot Game**
 
 Follow these steps to clone the project to your local environment.
 
-### Prerequisites
+### Prerequisites For Development
 
-- Node.js (version 14 or above)
-- Docker
+1. [Node.js](https://nodejs.org/)
+2. [MongoDB](https://www.mongodb.com/try/download/community) (If you do not want to download locally you can use mongo's cloud service)
+3. [Docker](https://www.docker.com/) (**Optional**)
 
 ### Installation
 
@@ -20,8 +21,14 @@ Follow these steps to clone the project to your local environment.
    
 2. **Navigate to the Project Directory**
    <p>Go to root directory of project</p>
-   <p>Open terminal and type <b>npm install</b> </p>
+   <p>Open terminal and type</p>
+   
+   ```bash
+    npm install
+   ```
+   
    <p>After installation is done create .env file and paste those keys:</p>
+   <p><b>Note: If you use cloud service then you need to type your access key to MONGO_URI_CLOUD field</b></p>
 
       ```env
       NODE_ENV=development
@@ -34,7 +41,7 @@ Follow these steps to clone the project to your local environment.
    <p>Great, you set your env variables. Now, go to the `src/db/connect.js` file and specify which mongo uri connection you want to connect to mongo client.</p>
 
    ```js
-   // JavaScript code for connecting to MongoDB
+   // URI options for connecting to MongoDB. These options comes from your .env file.
    const db_atlas_uri = process.env.MONGO_URI_CLOUD;
    const db_local_uri = process.env.MONGO_URI_DEV;
    const db_test_uri = process.env.MONGO_URI_TESTSV;
