@@ -7,7 +7,11 @@ const http = require("http")
 const app = express()
 const server = http.createServer(app);
 const configureRoutes = require("../routes/routes.config")
+const dynamicURLs = require("../middlewares/seturl")
 
+
+// urls
+app.use(dynamicURLs)
 // static paths
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/css', express.static(path.join(__dirname, '../public/css')));
@@ -47,6 +51,7 @@ const application_status = {
     base_api_path,
     port
 }
+
 
 
 module.exports = { server, application_status }
