@@ -25,7 +25,7 @@ const initializeSocket = (server) => {
 
                 const { requestedLines } = data
                 const requested_game = new SlotGame(data.gameId)
-                const game_data = await requested_game.generate_game_table(3, 5, requestedLines)
+                const game_data = await requested_game.generate_game_table(requestedLines)
 
                 cb?.(game_data)
 
