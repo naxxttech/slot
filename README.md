@@ -51,7 +51,15 @@ Follow these steps to clone the project to your local environment.
    }
    ```
 
+   <p>🚀 Run project on your localhost</p>
+   <p>Open terminal and type the command below</p>
+   
+   ```bash
+       npm run dev
+   ```
+
 3. **Run with Docker**
+   <p><b>Note: This process only for production stage. If project still in development mode follow above steps.</b></p>
    <p>Open terminal and type</p>
    
    ```bash
