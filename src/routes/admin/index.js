@@ -1,10 +1,10 @@
 const express = require("express")
 const router = express.Router()
-const { getAllGames, getGameById, create_new_game, update_game } = require("../db/models/GameSchema")
+
+const { getAllGames, getGameById, create_new_game, update_game } = require("../../db/models/GameSchema")
 
 
 
-// this route gets admin index view
 router.get("/", async (request, response) => {
 
     const context = {}

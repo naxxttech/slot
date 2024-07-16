@@ -1,5 +1,5 @@
 const socket = require("socket.io")
-const Game = require("../base/config")
+const SlotGame = require("../base/game.config")
 
 const initializeSocket = (server) => {
         // socket config
@@ -24,7 +24,7 @@ const initializeSocket = (server) => {
                 console.log("SPIN RECEIVED:", data)
 
                 const { requestedLines } = data
-                const requested_game = new Game(data.gameId)
+                const requested_game = new SlotGame(data.gameId)
                 const game_data = await requested_game.generate_game_table(3, 5, requestedLines)
 
                 cb?.(game_data)
