@@ -22,7 +22,7 @@
                     <div class="mt-5 text-center">
                         <h5>
                             
-                            <a href="/admin">
+                            <a href="<%=link%>/admin">
                                 Naxxt Admin Panel
                             </a>
                
@@ -38,7 +38,7 @@
                             <h5 class="m-0 ps-3">Games</h5>
 
                             <div class="ms-auto">
-                                <a clas href="/admin/resource/create/new/item">+</a>
+                                <a clas href="<%=link%>/admin/resource/create/new/item">+</a>
                             </div>
                       
                         </div>
@@ -49,7 +49,7 @@
                                 <% data.games.forEach(game => { %>
                                 
                                     <li>
-                                        <a href="/admin/resource/get/<%= game.gameId %>?data=raw">
+                                        <a href="<%=link%>/admin/resource/get/<%= game.gameId %>?data=raw">
                                             <%= game.gameName %>
                                         </a>
                                     </li>
