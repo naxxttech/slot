@@ -8,11 +8,13 @@ const gameRouter = require("./game/index");
 
 const configureRoutes = (app, prefix) => {
     
-    console.log("Adming page serves:", `${prefix}admin`)
+    let api_enpoint = prefix
+    if (!api_enpoint) api_enpoint = "/api/v1"
+    console.log("api:", api_enpoint)
 
     app.use('/', homeRouter);
     app.use(`${prefix}/admin`, adminRouter);
-    app.use(`${prefix}/games`, gameRouter);
+    app.use(`${api_enpoint}/games`, gameRouter);
 
 };
 

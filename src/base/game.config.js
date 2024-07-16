@@ -134,8 +134,6 @@ class Game {
         */
         async generate_game_table(totalLines) {
         
-        this.total_rows = total_rows
-        this.total_cols = total_cols
         this.requestedLines = totalLines
 
         // get assets
@@ -301,9 +299,6 @@ class Game {
                 }
             }
         }
-
-
-        console.log("CEEELS:", data)
 
         // restructure response data for cells key
         for (const rows of this.matrix_table) {
