@@ -19,9 +19,16 @@ Follow these steps to clone the project to your local environment.
    git clone https://github.com/naxxttech/slot.git
    
 2. **Navigate to the Project Directory**
-   <p>Go to root directory of project and open terminal</p>
+   <p>Go to root directory of project</p>
+   <p>Create .env file and paste those keys:</p>
+   
+   ```bash
+    NODE_ENV=development
+    PORT=3000
 
 3. **Run with Docker**
+   <p>Open terminal and type</p>
+   
    ```bash
    docker-compose up --build
 
