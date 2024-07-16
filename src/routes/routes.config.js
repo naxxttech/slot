@@ -2,13 +2,14 @@ const homeRouter = require("./home/index")
 const adminRouter = require("./admin/index")
 const gameRouter = require("./game/index")
 
-const configureRoutes = (app) => {
+
+const configureRoutes = (app, prefix) => {
     
-    const api_root_endpoint = "/api/v1";
+    console.log("Adming page serves:", `${prefix}/admin`)
 
     app.use('/', homeRouter);
-    app.use("/admin", adminRouter);
-    app.use(`${api_root_endpoint}/games`, gameRouter);
+    app.use(`/${prefix}/admin`, adminRouter);
+    app.use(`/${prefix}/games`, gameRouter);
 
 };
 
