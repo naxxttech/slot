@@ -22,14 +22,14 @@ Follow these steps to clone the project to your local environment.
    <p>Go to root directory of project</p>
    <p>Open terminal and type <b>npm install</b> </p>
    <p>After installation is done create .env file and paste those keys:</p>
-   
-      <pre><code>
+
+      ```env
       NODE_ENV=development
       PORT=3000
       MONGO_URI_DEV=mongodb://localhost:27017/dbname
       MONGO_URI_TESTSV=mongodb://test_server:27017/dbname
       MONGO_URI_CLOUD=""
-      </code></pre>
+      ```
 
    <p>Great, you set your env variables. Now, go to the `src/db/connect.js` file and specify which mongo uri connection you want to connect to mongo client.</p>
 
@@ -49,7 +49,8 @@ Follow these steps to clone the project to your local environment.
                // Handle connection error
            });
    }
- 
+   ```
+
 3. **Run with Docker**
    <p>Open terminal and type</p>
    
