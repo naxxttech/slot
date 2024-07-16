@@ -12,7 +12,11 @@ router.get("/", async (request, response) => {
 
     context.games = games_object.resource
 
-    response.render("admin/index", { title: "Admin Dashboard", data: context})
+    response.render("admin/index", { 
+        title: "Admin Dashboard", 
+        data: context,
+        link: response.locals.prefix
+    })
 })
 
 
@@ -45,7 +49,11 @@ router.get("/resource/get/:gameId", async (request, response) => {
         context.games = games_objects.resource
         context.game = game_object
 
-        return response.status(200).render("admin/resource_detail", { title: "Admin Dashboard", data: context})
+        return response.status(200).render("admin/resource_detail", { 
+            title: "Admin Dashboard", 
+            data: context,
+            link: response.locals.prefix
+        })
 
     } else {
 
@@ -62,7 +70,12 @@ router.get("/resource/create/new/item", async (request, response) => {
     const games_object = await getAllGames()
     context.games = games_object.resource
 
-    response.render("admin/add_resource", { title: "Admin Dashboard", data: context })
+    response.render("admin/add_resource", 
+        { 
+          title: "Admin Dashboard", 
+          data: context, 
+          link: response.locals.prefix
+        })
 
    
 })
