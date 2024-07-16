@@ -23,10 +23,33 @@ Follow these steps to clone the project to your local environment.
    <p>Open terminal and type <b>npm install</b> </p>
    <p>After installation is done create .env file and paste those keys:</p>
    
-   ```bash
-    NODE_ENV=development
-    PORT=3000
+      <pre><code>
+      NODE_ENV=development
+      PORT=3000
+      MONGO_URI_DEV=mongodb://localhost:27017/dbname
+      MONGO_URI_TESTSV=mongodb://test_server:27017/dbname
+      MONGO_URI_CLOUD=""
+      </code></pre>
 
+   <p>Great, you set your env variables. Now, go to the `src/db/connect.js` file and specify which mongo uri connection you want to connect to mongo client.</p>
+
+   ```js
+   // JavaScript code for connecting to MongoDB
+   const db_atlas_uri = process.env.MONGO_URI_CLOUD;
+   const db_local_uri = process.env.MONGO_URI_DEV;
+   const db_test_uri = process.env.MONGO_URI_TESTSV;
+   
+   // In this example we are connecting to the Atlas URI.
+   const make_db_connection = () => {
+       mongoose.connect(db_atlas_uri)
+           .then(() => {
+               // Connection successful
+           })
+           .catch(error => {
+               // Handle connection error
+           });
+   }
+ 
 3. **Run with Docker**
    <p>Open terminal and type</p>
    
