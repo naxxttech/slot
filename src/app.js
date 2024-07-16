@@ -14,18 +14,11 @@ const { port, base_api_path, prefix, developmentMode } = application_status
 const cmd_info = {
 
     homeRefeerer: `Server running on http://localhost:${port}/`,
-    api: `API located at http://localhost:${port}/${base_api_path}/<query_path>`,
-    dashboard: `Admin dashboard: http://localhost:${port}/admin`
+    api: developmentMode == "development" ? `API located at http://localhost:${port}${prefix}/<query_path>`: `API located at http://localhost:${port}/${base_api_path}/<query_path>`,
+    dashboard: developmentMode == "development" ? `Admin dashboard: http://localhost:${port}${prefix}/admin` : `Admin dashboard: http://localhost:${port}/admin`
 }
 
 const cmd_logs = [cmd_info.homeRefeerer, cmd_info.api, cmd_info.dashboard]
-
-if (developmentMode === "development") {
-
-
-    cmd_info.api = `API located at http://localhost:${port}/${prefix}/<query_path>`
-    cmd_info.dashboard = `Admin dashboard: http://localhost:${port}/${prefix}/admin`
-}
 
 
 server.listen(port, () => {

@@ -28,8 +28,16 @@ app.set("views", path.join(__dirname, '../views'));
 // regular config
 const port = process.env["PORT"]
 const developmentMode = process.env["NODE_ENV"]
-const prefix = process.env.prefix || '';
 const base_api_path = "api/v1"
+
+
+
+
+const isDevelopment = process.env.NODE_ENV === 'development';
+const prefix = isDevelopment ? '/api' : '';
+
+// group routes
+configureRoutes(app, prefix)
 
 
 const application_status = {
@@ -39,9 +47,6 @@ const application_status = {
     base_api_path,
     port
 }
-
-// group routes
-configureRoutes(app, prefix)
 
 
 module.exports = { server, application_status }
