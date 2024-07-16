@@ -41,12 +41,12 @@ Follow these steps to clone the project to your local environment.
    
    // In this example we are connecting to the Atlas URI.
    const make_db_connection = () => {
-       mongoose.connect(db_atlas_uri)
+       mongoose.connect(db_atlas_uri)   // < Just change this line
            .then(() => {
-               // Connection successful
+               //...
            })
            .catch(error => {
-               // Handle connection error
+               // ...
            });
    }
    ```
