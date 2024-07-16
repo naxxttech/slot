@@ -20,7 +20,7 @@ Follow these steps to clone the project to your local environment.
    
 2. **Navigate to the Project Directory**
    <p>Go to root directory of project</p>
-   <p>Open terminal and type **npm install**</p>
+   <p>Open terminal and type <b>npm install</b> </p>
    <p>After installation is done create .env file and paste those keys:</p>
    
    ```bash
