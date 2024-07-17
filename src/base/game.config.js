@@ -89,7 +89,7 @@ class Game {
                 // probability'i çıkart
                 // delete card.probability
                 // matrix_table[row][col] = {...card, position: { line: row, x: row + 1, y: col + 1 } }; 
-                matrix_table[row][col] = { line: row, cordinate: { x: row, y: col}, cardId: card.id}
+                matrix_table[row][col] = { cordinate: { x: col, y: row}, cardId: card.id}
             }
         }
     
