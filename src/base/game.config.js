@@ -1,6 +1,8 @@
 const crypto = require("crypto")
 const { getGameById } = require('../db/models/GameSchema')
 
+const { symbols, paylines } = require("./default.config")
+
 class Game {
 
     constructor(gameId) {
@@ -21,7 +23,7 @@ class Game {
          * game_get_config: databaseden ilgili oyunun datasını çeker
     * 
     */
-    async game_get_config() {
+    async game_get_config(requestedPaylines) {
         
         // bunlar veritabanından gelecek gameId ile config alınacak.
         console.log("REQUESTED GAME ID:", this.gameId)
@@ -29,107 +31,42 @@ class Game {
         // dbden tüm parçaları, dataları çek.
         const game_source = await getGameById(this.gameId)
 
-        // console.log("game source:", game_source, "\nGame Reels:", game_source?.resource?.reels)
+        // if resource is not found
+        if (game_source.code === 404) {
 
-        const reels  = [
-            { id: 0, reel: "ACE", probability: 0.2 }, 
-            { id: 1, reel: "ANCHOR", probability: 0.2 }, 
-            { id: 2, reel: 'FISH', probability: 0.1 }, 
-            { id: 3, reel: 'HORSE', probability: 0.1 }, 
-            { id: 4, reel: 'JACK', probability: 0.1 }, 
-            { id: 5, reel: 'KING', probability: 0.04}, 
-            { id: 6, reel: "NINE", probability: 0.03 }, 
-            { id: 7, reel: "QUEEN", probability: 0.01 }, 
-            { id: 8, reel: "SCATTER", probability: 0.01 },
-            { id: 9, reel: "SHELL", probability: 0.01 },
-            { id: 10, reel: "STAR", probability: 0.01 },
-            { id: 11, reel: "TEN", probability: 0.01 },
-            { id: 12, reel: "WILD", probability: 0.01 }
-        ];
+            return game_source
+        }
 
-        // ödeme tablosu
-        const payTable = [
-            
-            { reel:'Orc', payouts: { 3: 10, 2: 5 } },
-            { reel:'Skull', payouts: { 3: 15, 2: 12 } },
-            { reel:'Knight', payouts: { 3: 25, 2: 20 } },
-            { reel:'Archer', payouts: { 3: 27, 2: 21 } },
-            { reel:'Horse Knight', payouts: { 3: 30, 2: 26 } },
-            { reel:'Elite Wild', payouts: { 3: 35 } },
-            { reel:'King', payouts: { 3: 60, 2: 50 } },
-            { reel:'Queen', payouts: { 3: 50, 2: 45 } },
-        ];
+        console.log("game source:", game_source, "\nGame Reels:", game_source?.resource?.reels)
 
+            // do game has their own paylines & symbols if yes use it, otherwise default configuration
+            if (game_source.resource.paylines.length) {
 
-        // oyunun valalotiysi
-        const volalitiy = "low"
-        
-            const paylines = [
+                this.paylines = game_source.resource.paylines
+            } else {
 
-               // 1
-               [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]],
-        
-               [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4]],
+                this.paylines = paylines
+            }
 
-               [[2, 0], [2, 1], [2, 2], [2, 3], [2, 4]],
+            if (game_source.resource.reels.length) {
 
-               [[0, 0], [1, 1], [2, 3], [1, 3], [0, 4]],
-       
-               [[0, 2], [1, 1], [1, 3], [2, 0], [2, 4]],
+                this.reels = game_source.resource.reels
 
-               [[0, 0], [0, 1], [1, 2], [0, 3], [0, 4]],
+            } else {
 
-               [[1, 2], [2, 0], [2, 1], [2, 3], [2, 4]],
-  
-               [[1, 0], [0, 1], [0, 2], [0, 3], [1, 4]],
+                this.reels = symbols
+            }
+      
+            this.payTable = []
+            this.volalitiy = game_source.resource.volalitiy
 
-               [[1, 0], [2, 1], [2, 2], [2, 3], [1, 4]],
-               // 10
-               [[1, 0], [1, 1], [0, 2], [1, 3], [1, 4]],
-
-               [[1, 0], [1, 1], [2, 2], [1, 3], [1, 4]],
-
-               [[0, 0], [0, 1], [1, 2], [2, 3], [2, 4]],
-
-               [[2, 0], [2, 1], [1, 3], [0, 3], [0, 4]],
-
-               [[0, 1], [1, 0], [1, 2], [2, 3], [1, 4]],
-               // 15
-               [[1, 0], [2, 1], [1, 2], [0, 3], [1, 4]],
-               
-               [[0, 0], [1, 1], [1, 2], [1, 3], [2, 4]],
-
-               [[2, 0], [1, 1], [1, 2], [1, 3], [0, 4]],
-
-               [[1, 0], [0, 1], [0, 2], [1, 3], [2, 4]],
-
-               [[1, 0], [2, 1], [2, 2], [1, 3], [0, 4]],
-               // 20
-               [[0, 0], [2, 1], [0, 3], [2, 3], [0, 4]],
-
-               [[2, 0], [0, 1], [2, 2], [0, 3], [2, 4]],
-
-               [[0, 0], [0, 1], [1, 2], [2, 3], [1, 4]],
-
-               [[2, 0], [2, 1], [1, 2], [0, 3], [1, 4]],
-
-               [[1, 0], [1, 1], [0, 2], [1, 3], [2, 4]],
-               // 25
-               [[1, 0], [1, 1], [2, 2], [1, 3], [0, 4]],
-
-            ]
-            // paylinesi dışarı çıkart
-            this.paylines = paylines
-            this.reels = reels
-            this.payTable = payTable
-            this.volalitiy = volalitiy
+            // start game
+            return this.generate_game_table(requestedPaylines)
     }
 
 
         /**
          * generate_game_table: oyunun matrix tablosunu ve linelerini belirler
-         * @param {Number} total_rows - toplam tablo satır
-         * @param {Number} total_cols - toplam tablo sütun
          * @param {Number} totalLines - toplam kazanma çizgisi
         */
         async generate_game_table(totalLines) {
@@ -137,7 +74,7 @@ class Game {
         this.requestedLines = totalLines
 
         // get assets
-        await this.game_get_config()
+        // await this.game_get_config()
 
         this.paylines = this.paylines.slice(0, totalLines)
 
