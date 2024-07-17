@@ -16,6 +16,11 @@ const configureRoutes = (app, prefix) => {
     app.use(`${prefix}/admin`, adminRouter);
     app.use(`${api_enpoint}/games`, gameRouter);
 
+
+    app.use((request, response, next) => {
+        response.redirect(`${prefix}/admin`);
+    });
+
 };
 
 
