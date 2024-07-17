@@ -89,7 +89,7 @@ class Game {
                 // probability'i çıkart
                 // delete card.probability
                 // matrix_table[row][col] = {...card, position: { line: row, x: row + 1, y: col + 1 } }; 
-                matrix_table[row][col] = { cordinate: { x: col, y: row}, cardId: card.id}
+                matrix_table[row][col] = { cordinate: { x: col, y: row}, cardId: card.id }
             }
         }
     
@@ -202,16 +202,14 @@ class Game {
                 droppedSymbols[symbol.cardId]++;
             }
             
-
             // will refactor this code later
             for (let cardId in droppedSymbols) {
-
 
                 if (droppedSymbols[cardId] >= 3) {
 
             
                     const winLine = paylines.findIndex(lines => lines === payline) + 1
-                    console.log("kazanan payline:", winLine)
+       
                     data.win = true;
 
                     const table = []
@@ -223,20 +221,26 @@ class Game {
                                 const x = symbol.cordinate.x;
                                 const y = symbol.cordinate.y;
                                 
-                                const row = table.find(data => data.line === winLine)
+                                if (cardId in droppedSymbols && droppedSymbols[cardId] >= 3) {
 
-                                if (row) {
+                                    const row = table.find(data => data.line === winLine)
 
-                                    row.cards.push({ cardId, x, y})
-                                
-                                } else {
-
-                                    table.push({ line: winLine, cards: [{ cardId, x, y }]})
+                                    if (row) {
+    
+                                        row.cards.push({ cardId, x, y})
+                                    
+                                    } else {
+                                        // kazanmayan kartları muaf tut
+    
+                                        table.push({ line: winLine, cards: [{ cardId, x, y }]})
+                                    }
                                 }
+
+                             
                                 
                             })
 
-
+                      // tabledeki 3 den az olan kartları çıkart
                      data.winningPaylines = table
                 }
             }
