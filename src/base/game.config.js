@@ -89,7 +89,7 @@ class Game {
                 // probability'i çıkart
                 // delete card.probability
                 // matrix_table[row][col] = {...card, position: { line: row, x: row + 1, y: col + 1 } }; 
-                matrix_table[row][col] = { cordinate: { x: col, y: row}, cardId: card.id }
+                matrix_table[row][col] = { cordinate: { x: col, y: row}, cardId: card.id, cardName: card.reel }
             }
         }
     
@@ -185,73 +185,61 @@ class Game {
         for (const payline of this.paylines) {
 
             let symbols = payline.map(([row, col]) => this.matrix_table[row][col]);
-
+            console.log("len sym:", symbols.length)
             if (symbols.includes(undefined)) continue;
-        
+    
 
-            let droppedSymbols = {}
-        
-
+            const droppedSymbols = {}
             
+            // düşen parçanın düşme sayısını al
             for (let symbol of symbols) {
 
-                if (!droppedSymbols[symbol.cardId]) {
-                    droppedSymbols[symbol.cardId] = 0;
+                if (!droppedSymbols[symbol.cardName]) {
+                    
+                    const entry = droppedSymbols[symbol.cardName] = {...symbol, dropCount: 0 }
+                    // remove unwanted keys
+                    delete entry.cardName
                 }
 
-                droppedSymbols[symbol.cardId]++;
+                droppedSymbols[symbol.cardName].dropCount += 1;
             }
-            
-            // will refactor this code later
-            for (let cardId in droppedSymbols) {
 
-                if (droppedSymbols[cardId] >= 3) {
+            console.log("dropped symbols:", droppedSymbols)
 
-            
+            // game rules starts here
+            for (let cardName in droppedSymbols) {
+
+                const { cardId, x, y, dropCount } = droppedSymbols[cardName]
+                // if payline contains same card three times then we count as win
+                if (dropCount >= 3) {
+
+                    data.win = true
                     const winLine = paylines.findIndex(lines => lines === payline) + 1
-       
-                    data.win = true;
+                    const cardsInWinLine = payline.filter(([row, col]) => this.matrix_table[row][col].cardName === cardName);
 
-                    const table = []
+                    // arrange winning cards with their cordinates for frontend
+                    const winEntry = {
+                        line: winLine,
+                        cards: cardsInWinLine.map(([row, col]) => ({
 
-
-                            
-                            symbols.forEach(symbol => {
-                                const cardId = symbol.cardId;
-                                const x = symbol.cordinate.x;
-                                const y = symbol.cordinate.y;
-                                
-                                if (cardId in droppedSymbols && droppedSymbols[cardId] >= 3) {
-
-                                    const row = table.find(data => data.line === winLine)
-
-                                    if (row) {
-    
-                                        row.cards.push({ cardId, x, y})
-                                    
-                                    } else {
-                                        // kazanmayan kartları muaf tut
-    
-                                        table.push({ line: winLine, cards: [{ cardId, x, y }]})
-                                    }
-                                }
-
-                             
-                                
-                            })
-
-                      // tabledeki 3 den az olan kartları çıkart
-                     data.winningPaylines = table
+                            cardId: droppedSymbols[cardName].cardId,
+                            cardName: cardName,
+                            x: col,
+                            y: row,
+                        }))
+                    };
+            
+                    data.winningPaylines.push(winEntry)
                 }
-            }
-        }
 
-        // restructure response data for cells key
+            }
+        
+        }
+    
         for (const rows of this.matrix_table) {
 
             data.cells.push(rows.map(object => object.cardId))            
         }
-
 
         return data
     }
