@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router()
 
-const { getAllGames, getGameById, create_new_game, update_game } = require("../../db/models/GameSchema")
+const { getAllGames, getGameById, create_new_game, update_game, deleteGameById } = require("../../db/models/GameSchema")
 
 
 
@@ -61,6 +61,20 @@ router.get("/resource/get/:gameId", async (request, response) => {
     }
 
 
+})
+
+// this route deletes resource
+router.get("/resource/delete/:gameId", async (request, response) => {
+
+    const operation = await deleteGameById(request.params.gameId)
+
+    if (operation.code === 200) {
+
+        return response.status(operation.code).redirect(`${response.locals.prefix}/admin`)
+    }
+
+
+    return response.status(operation.code).json(operation)
 })
 
 // this route gets create game view
