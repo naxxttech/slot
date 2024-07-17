@@ -186,7 +186,6 @@ class Game {
 
             let symbols = payline.map(([row, col]) => this.matrix_table[row][col]);
 
-            
             if (symbols.includes(undefined)) continue;
         
 
@@ -210,6 +209,9 @@ class Game {
 
                 if (droppedSymbols[cardId] >= 3) {
 
+            
+                    const winLine = paylines.findIndex(lines => lines === payline) + 1
+                    console.log("kazanan payline:", winLine)
                     data.win = true;
 
                     const table = []
@@ -217,12 +219,11 @@ class Game {
 
                             
                             symbols.forEach(symbol => {
-
                                 const cardId = symbol.cardId;
                                 const x = symbol.cordinate.x;
                                 const y = symbol.cordinate.y;
                                 
-                                const row = table.find(data => data.line === symbol.line)
+                                const row = table.find(data => data.line === winLine)
 
                                 if (row) {
 
@@ -230,7 +231,7 @@ class Game {
                                 
                                 } else {
 
-                                    table.push({ line: symbol.line, cards: [{ cardId, x, y }]})
+                                    table.push({ line: winLine, cards: [{ cardId, x, y }]})
                                 }
                                 
                             })
