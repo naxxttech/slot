@@ -13,8 +13,10 @@ router.get("/:gameId", async (request, response) => {
 
         return response.status(400).json({ message: "No game ID specified."})
     }
- 
-    const requestedPaylines = 25
+
+    let { requestedPaylines } = request.query
+    if (!requestedPaylines) requestedPaylines = 1
+
     const round = new SlotGame(gameId)
     const roundResult = await round.start_game(requestedPaylines)
     console.log("valid istance:", roundResult)
