@@ -1,24 +1,29 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
+
 const { Schema } = mongoose;
+
+
+
 
 // const DataSchema = require("./Relation")
 const GameSchema = new Schema({
   
     gameId: { type: String, required: true }, // Game ID or reference
     gameName: { type: String, required: true }, 
-    lines: { type: [[Number]] },  // Array of arrays representing paylines
+    paylines: { type: [[Number | String]] },  // Array of arrays representing paylines
     rows: { type: Number, default: 5},
     cols: { type: Number, default: 3},
     reels: [
-             { 
-                id: { type: Number, required: true }, 
-                name: { type: String, required: true },
-                // şans oranı varsayılan olarak %50
+
+            { 
+                id: Number, 
+                name: String,
                 probability: { type: String, default: "0.5"}
-             }
+            }
     ],
     // validation for vol: high, medium
     volalitiy: { type: String, default: "low"}
+
 }, {
 
     timestamps: true
@@ -109,6 +114,52 @@ const getGameById = async (gameId) => {
     return init
 }
 
+
+const deleteGameById = async (gameId) => {
+
+    const init = {
+
+        code: 200,
+        message: "",
+        resource: null
+    }
+
+    if (!gameId) {
+        
+        init.code = 400
+        init.message = "Missing Data: gameId"
+        return init
+    }
+
+
+    try {
+        
+        const game_object = await model.findOne({ gameId })
+
+        if (game_object === null) {
+
+            init.code = 404
+            init.message = "Could not find requested resource."
+   
+
+        } else {
+
+            init.message = "Resource found and has been deleted."
+            await game_object.deleteOne()
+        }
+
+    } catch (error) {
+
+        console.log("[DELETE GAME] Error", error)
+
+        init.code = 500
+        init.message = "Something went wrong please try again in 5 minutes."
+    }
+
+    return init
+}
+
+
 /**
  * @typedef {Object} Reel
  * @property {number} id - The ID of the reel.
@@ -124,7 +175,7 @@ const getGameById = async (gameId) => {
  * @param {Array<Reel>} gameData.reels - The reels data accepts two params id and name
  * @returns {Object} an object that contains success result data or not
  */
-const create_new_game = async (gameData = { rows, cols, reels: [] }) => {
+const create_new_game = async (body) => {
 
     const init_data = {
 
@@ -133,38 +184,37 @@ const create_new_game = async (gameData = { rows, cols, reels: [] }) => {
         resource:{}
     }
 
+    if (!body.gameName) {
+
+        init_data.message = "Game Name is required"
+        return init_data
+    }
+
+    const array_symbol = []
+
+    for (const key in body) {
+        
+        if (body.hasOwnProperty(key) && key.startsWith('card-')) {
+            array_symbol.push({ id: Math.floor(Math.random() * 10000), name: body[key] });
+        }
+    }
 
      /* VALIDATION BURADA BAŞLAR */
-     // Rows kontrolü
-    if (!('rows' in gameData) || typeof gameData.rows !== 'number' || gameData.rows < 3) {
-        init_data.message = "Missing, invalid or less than 3 'rows' parameter.";
-        return init_data;
-    }
-
-    // Cols kontrolü
-    if (!('cols' in gameData) || typeof gameData.cols !== 'number' || gameData.cols < 3) {
-        init_data.message = "Missing, invalid or less than 3 'cols' parameter.";
-        return init_data;
-    }
-
-    // Reels kontrolü
-    if (!('reels' in gameData) || !Array.isArray(gameData.reels)) {
-        init_data.message = "Missing or invalid 'reels' parameter.";
-        return init_data;
-    }
-
-    // Reels Array Object Kontrolü
-    if (gameData.reels.some(reel => typeof reel.id !== 'number' || typeof reel.name !== 'string' || reel.name.trim() === '')) {
-        init_data.message = "Invalid 'id' or 'name' in reels parameter. 'id' should be a number,'name' should be a non-empty string.";
-        return init_data;
-    }
-
     try {
 
         const random_game_id = Math.floor(Math.random() * 2341213)
-        gameData.gameId = random_game_id
+       
+        const payload = {
 
-        const new_game = await model.create(gameData)
+            gameId: random_game_id,
+            gameName: body.gameName,
+            volalitiy: body.volalitiy,
+
+        }
+
+        if (array_symbol.length) payload.reels = array_symbol
+        
+        const new_game = await model.create(payload)
 
         init_data.code = 201
         init_data.message = "Resource created successfully"
@@ -223,4 +273,4 @@ const update_game = async (new_entries) => {
     return init_data
 }
 
-module.exports = { getAllGames, getGameById, create_new_game, update_game, model: GameSchema }
+module.exports = { getAllGames, getGameById, create_new_game, update_game, deleteGameById, model: GameSchema }
