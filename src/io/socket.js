@@ -24,10 +24,10 @@ const initializeSocket = (server) => {
                 console.log("SPIN RECEIVED:", data)
 
                 const { requestedLines } = data
-                const spin = new SlotGame(data.gameId)
-                const spinResult = await spin.game_get_config(requestedLines)
+                const round = new SlotGame(data.gameId)
+                const roundResult = await round.start_game(requestedLines)
 
-                cb?.(spinResult)
+                cb?.(roundResult)
 
             })
 

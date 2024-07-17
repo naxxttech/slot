@@ -23,7 +23,7 @@ class Game {
          * game_get_config: databaseden ilgili oyunun datasını çeker
     * 
     */
-    async game_get_config(requestedPaylines) {
+    async start_game(requestedPaylines) {
         
         // bunlar veritabanından gelecek gameId ile config alınacak.
         console.log("REQUESTED GAME ID:", this.gameId)
@@ -191,6 +191,8 @@ class Game {
         
 
             let droppedSymbols = {}
+        
+
             
             for (let symbol of symbols) {
 
@@ -200,7 +202,9 @@ class Game {
 
                 droppedSymbols[symbol.cardId]++;
             }
+            
 
+            // will refactor this code later
             for (let cardId in droppedSymbols) {
 
 
@@ -229,7 +233,7 @@ class Game {
                                     table.push({ line: symbol.line, cards: [{ cardId, x, y }]})
                                 }
                                 
-                            });
+                            })
 
 
                      data.winningPaylines = table

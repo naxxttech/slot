@@ -15,12 +15,12 @@ router.get("/:gameId", async (request, response) => {
     }
  
     const requestedPaylines = 25
-    const spin = new SlotGame(gameId)
-    const spinResult = await spin.game_get_config(requestedPaylines)
-    console.log("valid istance:", spinResult)
+    const round = new SlotGame(gameId)
+    const roundResult = await round.start_game(requestedPaylines)
+    console.log("valid istance:", roundResult)
     // const gameResult = await game.generate_game_table(requestedPaylines)
 
-    response.status(200).json(spinResult)
+    response.status(200).json(roundResult)
 
 })
 
