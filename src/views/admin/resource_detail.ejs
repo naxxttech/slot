@@ -6,7 +6,7 @@
 
 <div class="d-flex align-items-center">
     <h1><%= data.game.resource.gameName %></h1>
-    <button class="ms-auto btn btn-danger">Delete</button>
+    <button onclick="handleDelete('<%= data.game.resource.gameId %>')" class="ms-auto btn btn-danger">Delete</button>
 </div>
 
 <hr>
@@ -78,6 +78,16 @@
 
 
 <script>
+
+const handleDelete = (gameId) => {
+
+    const confirm = window.confirm("Do you confirm to delete this game?")
+
+    if (confirm) {
+
+        window.location.href = `<%=link%>/admin/resource/delete/${gameId}`
+    }
+}
 
 const spin = (gameId) => {
 
