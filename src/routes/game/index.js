@@ -7,23 +7,20 @@ const SlotGame = require("../../base/game.config")
 router.get("/:gameId", async (request, response) => {
 
 
-    const requested_gameId = request.params.gameId
+    const gameId = request.params.gameId
     
-    if (!requested_gameId) {
+    if (!gameId) {
 
         return response.status(400).json({ message: "No game ID specified."})
     }
  
-    // testId
-    const testGameId = 54
-
     const requestedPaylines = 25
-    const game = new SlotGame(testGameId)
-    const gameResult = await game.generate_game_table(requestedPaylines)
+    const spin = new SlotGame(gameId)
+    const spinResult = await spin.game_get_config(requestedPaylines)
+    console.log("valid istance:", spinResult)
+    // const gameResult = await game.generate_game_table(requestedPaylines)
 
-    console.log("DATA:", gameResult)
-
-    response.status(200).json(gameResult)
+    response.status(200).json(spinResult)
 
 })
 
