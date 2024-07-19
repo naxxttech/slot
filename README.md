@@ -63,8 +63,8 @@ Follow these steps to clone the project to your local environment.
    
    ```html
         <script>
-                    // socket configuration
-                    const socket = io({
+                 // socket configuration
+                  const socket = io({
                       auth: {
                           sessionId: "jmkqikvucqw2z93",
                           playerId: "frmtest"
@@ -73,23 +73,24 @@ Follow these steps to clone the project to your local environment.
    
                  // get user balance
                  socket.emit("fetchBalance", (args) => { /* handle args here*/ }
-   
-                 const sample_data = {
+
+                 const gameId = "the game id"
+                 const payload = {
                        requestedLines: 10,
                        gameId: gameId
                 }
    
                  // handle spin and get win / lose / bet results 
-                socket.emit("spin", sample_data, (args) => {}
+                socket.emit("spin", payload, (args) => {}
    
         </script>
     ```
    
-   <p>🚀 Run project on your localhost</p>
-   <p>Open terminal and type the command below</p>
+   <p>🚀 That's all. Now, run project on your localhost</p>
+   <p>Open terminal and type one of the commands below</p>
    
    ```bash
-       npm run dev
+       npm run dev or npm start
    ```
 
 ### Run with Docker
