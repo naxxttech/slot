@@ -23,23 +23,24 @@ const medium_value = { x3: 15, x4: 20, x5: 25 }
 const rare_value = { x3: 20, x4: 25, x5: 35 }
 const tresure_value = { x2: 15, x3: 20, x4: 25, x5: 30 }
 const super_value = { x3: 30, x4: 35, x5: 40 }
-
+const requiredCards = [3, 2]
 const payTable = [
     
-    { id: 0, reel:'ACE', payouts: common_value  },
-    { id: 5, reel:'KING', payouts: common_value },
-    { id: 2, reel:'FISH', payouts: starter_value },
-    { id: 1, reel:'ANCHOR', payouts: starter_value },
-    { id: 3, reel:'HORSE', payouts: { x3: 6, x4: 12, x5: 18} },
-    { id: 4, reel:'JACK', payouts: medium_value },
-    { id: 11, reel:'TEN', payouts: medium_value },
-    { id: 7, reel:'QUEEN', payouts: medium_value },
-    { id: 9, reel:'SHELL', payouts: rare_value },
-    { id: 10, reel:'STAR', payouts: rare_value },
-    { id: 6, reel:'NINE', payouts: { x2: 3, x3: 6, x4: 12, x5: 18} },
-    { id: 8, reel:'SCATTER', payouts: tresure_value },
-    { id: 12, reel:'WILD', payouts: super_value },
+    { id: 0, reel:'ACE', payouts: common_value, minSymbols: requiredCards[0] },
+    { id: 5, reel:'KING', payouts: common_value, minSymbols: requiredCards[0] },
+    { id: 2, reel:'FISH', payouts: starter_value, minSymbols: requiredCards[1] },
+    { id: 1, reel:'ANCHOR', payouts: starter_value, minSymbols: requiredCards[1] },
+    { id: 3, reel:'HORSE', payouts: { x3: 6, x4: 12, x5: 18}, minSymbols: requiredCards[0] },
+    { id: 4, reel:'JACK', payouts: medium_value, minSymbols: requiredCards[0] },
+    { id: 11, reel:'TEN', payouts: medium_value, minSymbols: requiredCards[0] },
+    { id: 7, reel:'QUEEN', payouts: medium_value, minSymbols: requiredCards[0] },
+    { id: 9, reel:'SHELL', payouts: rare_value, minSymbols: requiredCards[0] },
+    { id: 10, reel:'STAR', payouts: rare_value, minSymbols: requiredCards[0] },
+    { id: 6, reel:'NINE', payouts: { x2: 3, x3: 6, x4: 12, x5: 18}, minSymbols: requiredCards[1] },
+    { id: 8, reel:'SCATTER', payouts: tresure_value, minSymbols: requiredCards[1] },
+    { id: 12, reel:'WILD', payouts: super_value, minSymbols: requiredCards[0] },
 ];
+
 
 const paylines = [
     
