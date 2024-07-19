@@ -104,9 +104,10 @@ class Game {
 
                 matrix_table[row][col] = {
 
-                    cordinate: { x: row, y: col },
+                    cordinate: { x: col, y: row },
                     cardId: card.id,
-                    cardName: card.reel
+                    cardName: card.reel,
+                    dropCount: 0
                 };
             }
         }    
@@ -182,37 +183,34 @@ class Game {
 
 
 
-    calculate_payouts(symbolName, symbolDropObject) {
+    calculate_payouts(symbol, paytable) {
 
-        const { cardId, dropCount } = symbolDropObject[symbolName]
+        const { dropCount } = symbol
+        const { payouts } = paytable
 
         let prize = 0;
 
-        for (const symbol of payTable) {
-            
-            if (symbol.id === cardId) {
-
-                switch(dropCount) {
+        switch(dropCount) {
 
                     case 2:
-                        prize += symbol.payouts?.x2 || 0
+                        prize += payouts?.x2 || 0
                         break;
 
                     case 3:
-                        prize += symbol.payouts.x3
+                        prize += payouts.x3
                         break;
 
                     case 4: 
-                        prize += symbol.payouts.x4
+                        prize += payouts.x4
                         break;
 
                     case 5: 
-                        prize += symbol.payouts.x5
+                        prize += payouts.x5
                         break;
                 }
 
-            }
-        }
+            
+        
 
         return prize
     }
@@ -221,8 +219,6 @@ class Game {
          * calculate_results: oyunun kazanma durumunu belirler
     */
     calculate_results() {
-
-        // initials
 
         let data = { 
         
@@ -234,64 +230,75 @@ class Game {
         }
 
         // restrucute object
-
         for (const payline of this.paylines) {
 
-            let symbols = payline.map(([row, col]) => this.matrix_table[row][col]);
-            console.log("len sym:", symbols.length)
+            let symbols = payline.map(([col, row]) => this.matrix_table[col][row]);
             if (symbols.includes(undefined)) continue;
     
 
             const droppedSymbols = {}
-            
+            const winLine = paylines.findIndex(lines => lines === payline) + 1
             // düşen parçanın düşme sayısını al
             for (let symbol of symbols) {
-
-                if (!droppedSymbols[symbol.cardName]) {
+          
+                
+                if (!droppedSymbols[winLine]) {
                     
-                    const entry = droppedSymbols[symbol.cardName] = {...symbol, dropCount: 0 }
-                    // remove unwanted keys
-                    delete entry.cardName
-                }
+                    droppedSymbols[winLine] = [ {...symbol} ]
+                } 
 
-                droppedSymbols[symbol.cardName].dropCount += 1;
-            }
-
-            // game rules starts here
-            for (let cardName in droppedSymbols) {
-
-                const { cardId, x, y, dropCount } = droppedSymbols[cardName]
-                // if payline contains same card three times then we count as win
-                if (dropCount >= 3) {
+                if (droppedSymbols[winLine]) {
                     
-                    data.win = true
+                    droppedSymbols[winLine].push(symbol)
+                    symbol.dropCount += 1;
+                } 
+
+             
+                // check paytable and minimum card drop requiriment
+                const { cardId, cardName, dropCount } = symbol
+                const payRulesForCard = payTable.find(entry => entry.id === cardId);
+
+                
+                if (dropCount >= payRulesForCard.minSymbols) {
+                    console.log("drop:", droppedSymbols)
                     const winLine = paylines.findIndex(lines => lines === payline) + 1
-                    const cardsInWinLine = payline.filter(([row, col]) => this.matrix_table[row][col].cardName === cardName);
+                    const cardsInWinLinePositions = payline.filter(([col, row]) => this.matrix_table[col][row].cardName === cardName);
+                    const cardsInWinLineObject = cardsInWinLinePositions.map(([col, row]) => ({
 
-                    // arrange winning cards with their cordinates for frontend
-                    const winEntry = {
+                        cardId: cardId,
+                        cardName: cardName,
+                        x: row,
+                        y: col,
+                        dropCount
+           
+                    } ))
+
+                    const linePayout = this.calculate_payouts(symbol, payRulesForCard)
+
+               
+
+                    /* reps */
+                    console.table([{ payline: payline.toString(), line: winLine}])
+                    console.log("this payline triggered win by following card:")
+                    console.table(symbol)
+                    console.log("this payline's triggered cordinates:", cardsInWinLinePositions)
+                    console.log("this payline's triggered cordinates as obj:", cardsInWinLineObject)
+
+                    const win_report = {
 
                         line: winLine,
-                        cards: cardsInWinLine.map(([row, col]) => ({
-
-                            cardId: cardId,
-                            cardName: cardName,
-                            x: col,
-                            y: row,
-               
-                        } )),
-
-                        // static value for now
+                        cards: cardsInWinLineObject,
                         multiplier: 1,
-                        // line prize
-                        payout: this.calculate_payouts(cardName, droppedSymbols)
-                    };
-            
-                    data.winningPaylines.push(winEntry)
-                }
+                        payout: linePayout
 
+                    }
+
+                    // win reports
+                    data.win = true
+                    data.totalPayout += linePayout
+                    data.winningPaylines.push(win_report)
+                }
             }
-        
         }
 
     
@@ -300,12 +307,6 @@ class Game {
             data.cells.push(rows.map(object => object.cardId))            
     
         }
-
-        // get total prize
-        data.totalPayout = data.winningPaylines.reduce((total, object) => {
-            return total + (object.payout || 0);
-
-        }, 0);
 
         return data
     }
