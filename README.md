@@ -36,6 +36,7 @@ Follow these steps to clone the project to your local environment.
       MONGO_URI_DEV=mongodb://localhost:27017/dbname
       MONGO_URI_TESTSV=mongodb://test_server:27017/dbname
       MONGO_URI_CLOUD=""
+      BETAPI=https://ostageapi.mbit24.com/
       ```
 
    <p>Great, you set your env variables. Now, go to the `src/db/connect.js` file and specify which mongo uri connection you want to connect to mongo client.</p>
@@ -57,24 +58,51 @@ Follow these steps to clone the project to your local environment.
            });
    }
    ```
+   ### WebSocket Configuration
+   <p>In order to interact with API from client side you must send sessionId and playerId as payload on WebSocket.</p>
+   
+   ```html
+        <script>
+                 // socket configuration
+                  const socket = io({
+                      auth: {
+                          sessionId: "jmkqikvucqw2z93",
+                          playerId: "frmtest"
+                      }
+                  });
+   
+                 // get user balance
+                 socket.emit("fetchBalance", (args) => { /* handle args here*/ }
 
-   <p>🚀 Run project on your localhost</p>
-   <p>Open terminal and type the command below</p>
+                 const gameId = "the game id"
+                 const payload = {
+                       requestedLines: 10,
+                       gameId: gameId
+                }
+   
+                 // handle spin and get win / lose / bet results 
+                socket.emit("spin", payload, (args) => {}
+   
+        </script>
+    ```
+   
+   <p>🚀 That's all. Now, run project on your localhost</p>
+   <p>Open terminal and type one of the commands below</p>
    
    ```bash
-       npm run dev
+       npm run dev or npm start
    ```
 
-3. **Run with Docker**
+### Run with Docker
    <p><b>Note: This process only for production stage. If project still in development mode follow above steps.</b></p>
    <p>Open terminal and type</p>
    
    ```bash
-   docker-compose up --build
-
-  <p>This command will start the project within Docker containers.</p>
-   
-4. **Access the Application**
+     docker-compose up --build
+   ```
+  <p>That command will start the project within Docker containers.</p>
+  
+  **Access the Application**
     <p>
         The application will run by default at http://localhost:4000. You can access it via your web browser or an HTTP client (e.g. Postman).
     </p>

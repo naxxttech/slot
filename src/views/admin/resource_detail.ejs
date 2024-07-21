@@ -79,6 +79,15 @@
 
 <script>
 
+window.onload = () => {
+
+    socket.emit("fetchBalance", (args) => {
+
+        console.log("balance:", args)
+    })
+
+}
+
 const handleDelete = (gameId) => {
 
     const confirm = window.confirm("Do you confirm to delete this game?")
@@ -88,6 +97,8 @@ const handleDelete = (gameId) => {
         window.location.href = `<%=link%>/admin/resource/delete/${gameId}`
     }
 }
+
+
 
 const spin = (gameId) => {
 
