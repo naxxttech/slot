@@ -1,8 +1,10 @@
 const crypto = require("crypto")
+const RNG = require("./symbol.picker")
 
 const make_api_request = require("../helpers/httpClient")
 const { getGameById } = require('../db/models/GameSchema')
 const { symbols, paylines, payTable } = require("./default.config")
+
 
 class Game {
 
@@ -171,62 +173,11 @@ class Game {
          * getRandomReel: oyunun matrix tablosuna RNG ile atanacak parçaları belirler
     */
     async getRandomReel() { 
+        
+         const random = new RNG(this.reels)
+         const symbol = random.getRandomSymbolWithProbability()
 
-        const totalProbability = this.reels.reduce((sum, reel) => sum + reel.probability, 0);
-
-        switch (this.volalitiy) {
-            case 'low':
-                this.reels = this.reels.map(reel => ({
-                    ...reel,
-                    probability: (reel.probability / totalProbability) * 0.5
-                }));
-                
-                this.payout = 1
-                break;
-
-            case 'medium':
-                this.reels = this.reels.map(reel => ({
-                    ...reel,
-                    probability: reel.probability / totalProbability
-                }));
-                
-                this.payout = 2
-                break;
-
-            case 'high':
-                this.reels = this.reels.map(reel => ({
-                    ...reel,
-                    probability: (reel.probability / totalProbability) * 0.1
-                }));
-    
-                this.payout = 3
-                break;
-
-            default:
-                throw new Error('Unknown volatility level');
-        }
-
-        const RNG = crypto.randomInt(100000) / 100000;
-
-        let chance = 0;
-
-        // parça döndürmeye başla
-        for (const reel of this.reels) {
-            chance += reel.probability;
-            console.log("chance:", chance, "random number:", RNG)
-
-            if (RNG < chance) {
-                console.log("Şans oranı tuttu düşen parça:", reel)
-                return reel;
-            }
-    
-            // tutmazsa rastgele döndür
-            const randomReel = this.reels[Math.floor(Math.random() * this.reels.length)]
-            console.log("Şans oranı tutmadı başka bir parça atılıyor", randomReel.reel)
-
-            return randomReel
-        }
-
+         return symbol
     }
 
 
