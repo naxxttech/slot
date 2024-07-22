@@ -105,7 +105,8 @@ const spin = (gameId) => {
     const test_user = {
         
         requestedLines: 10,
-        gameId: gameId
+        gameId: gameId,
+        bet: 100
 
     }
     socket.emit("spin", test_user, (args) => {

@@ -1,5 +1,6 @@
 const socket = require("socket.io")
-const SlotGame = require("../base/game.config")
+const SlotGame = require("../base/game.config");
+const make_api_request = require("../helpers/httpClient");
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 const initializeSocket = (server) => {
@@ -61,27 +62,9 @@ const initializeSocket = (server) => {
 
                 const betAPI = process.env["BETAPI"]
                 const endpoint = `${betAPI}/api/balance/GetBalance?CasinoId=1&PlayerId=${socket.user.playerId}&SessionId=${socket.user.sessionId}`
-                const error_object = { code: null }
-               
-                try {
-                    
-                    const request = await fetch(endpoint)
-                    error_object.code = request.status
-
-                    if (request.status !== 200) {
-
-                        throw new Error("Unable to connect service API")
-                    }
-
-                    const response = await request.json()
-                    cb?.(response)
-
-                } catch (error) {
-
-                    console.log("[SERVICE ERROR] WS:", error, error_object)
-                    error_object.message = "Unable to connect service APIs"
-                    cb?.(error_object)
-                }
+   
+                const new_api_request = await make_api_request(endpoint)
+                cb?.(new_api_request)
 
             })
 
@@ -89,8 +72,15 @@ const initializeSocket = (server) => {
 
                 console.log("SPIN RECEIVED:", data, "session:", socket.user)
 
-                const { requestedLines } = data
-                const round = new SlotGame(data.gameId)
+                const { requestedLines, bet } = data
+
+                if (!bet) {
+
+                    cb?.("Bet amount is not enough to spin")
+                    return
+                }
+
+                const round = new SlotGame(data.gameId, socket.user, bet)
                 const roundResult = await round.start_game(requestedLines)
 
                 cb?.(roundResult)
