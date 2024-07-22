@@ -23,8 +23,8 @@ const make_api_request = async (endpoint) => {
 
     } catch (error) {
 
-        console.log("[SERVICE ERROR] WS:", error, error_object)
-        error_object.message = "Unable to connect service APIs"
+        console.log("[SERVICE ERROR] WS:", error, response_object)
+        response_object.message = "Unable to connect service APIs"
         
 
     }
