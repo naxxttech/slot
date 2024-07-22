@@ -1,7 +1,7 @@
 const socket = require("socket.io")
 const SlotGame = require("../base/game.config");
 const make_api_request = require("../helpers/httpClient");
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+
 
 const initializeSocket = (server) => {
         // socket config
