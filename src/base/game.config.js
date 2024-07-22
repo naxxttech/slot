@@ -1,13 +1,16 @@
 const crypto = require("crypto")
-const { getGameById } = require('../db/models/GameSchema')
 
+const make_api_request = require("../helpers/httpClient")
+const { getGameById } = require('../db/models/GameSchema')
 const { symbols, paylines, payTable } = require("./default.config")
 
 class Game {
 
-    constructor(gameId) {
+    constructor(gameId, user, bet) {
 
         this.gameId = gameId
+        this.user = user
+        this.bet = bet
         this.matrix_table = null
         this.total_rows = 3
         this.total_cols = 5
@@ -19,12 +22,56 @@ class Game {
         this.payTable = null
     }
 
+
+    async pay(type, betAmount) {
+
+        const baseURL = process.env["BETAPI"]
+        const { playerId, sessionId } = this.user
+
+        const url = `${baseURL}api/balance/GetChangeBalance?CasinoId=1&PlayerId=${playerId}&SessionId=${sessionId}&GameId=1&Operations=[{"Type":"Bet","Amount":"${betAmount}"},{"Type":"${type}","Amount":"${betAmount + 10}"}]`
+        const new_api_request = await make_api_request(url)
+
+        console.log("This is", type)
+        console.log("API RESULT:", new_api_request)
+        return new_api_request
+    
+    }
+
+
+    async check_user_balance() {
+
+           const { playerId, sessionId } = this.user
+           const betAPI = process.env["BETAPI"]
+           const endpoint = `${betAPI}/api/balance/GetBalance?CasinoId=1&PlayerId=${playerId}&SessionId=${sessionId}`
+           
+           const new_api_request = await make_api_request(endpoint)
+           return new_api_request
+    
+    }
+
     /**
          * game_get_config: databaseden ilgili oyunun datasını çeker
     * 
     */
     async start_game(requestedPaylines) {
         
+        // get user balance
+        const user_balance_object = await this.check_user_balance()
+        console.log("user_balance_object:", user_balance_object)
+        // handle potential errors
+        if (user_balance_object.code !== 200) {
+
+            return user_balance_object
+        }
+
+        if (user_balance_object.resource.Amount < this.bet) {
+
+            user_balance_object.resource = null
+            user_balance_object.message = "You don't have enough amount to play"
+            user_balance_object.code = 403
+            return user_balance_object
+        }
+
         // bunlar veritabanından gelecek gameId ile config alınacak.
         console.log("REQUESTED GAME ID:", this.gameId)
 
@@ -37,12 +84,14 @@ class Game {
             return game_source
         }
 
+
         console.log("game source:", game_source, "\nGame Reels:", game_source?.resource?.reels)
 
             // do game has their own paylines & symbols if yes use it, otherwise default configuration
             if (game_source.resource.paylines.length) {
 
                 this.paylines = game_source.resource.paylines
+
             } else {
 
                 this.paylines = paylines
@@ -221,6 +270,7 @@ class Game {
         let data = { 
         
             win: false,
+            winType: "",
             winningPaylines: [],
             cells: [],
             totalPayout: 0
@@ -259,6 +309,7 @@ class Game {
                     if (!lineInfo) {
 
                         lineInfo = {
+
                             line: currentLine,
                             cards: [],
                             multiplier: 1,
@@ -286,6 +337,7 @@ class Game {
                     // mark as win
                     data.win = true
                     data.totalPayout += linePayout
+
                 }
              
         
@@ -299,6 +351,16 @@ class Game {
     
         }
 
+        // test purposes
+        if (data.win) {
+
+            data.winType = "Win"
+        } else {
+
+            data.winType = "Lose"
+        }
+        const userbalance = this.pay(data.winType, this.bet).then(response => console.log("payout user balance:", response))
+        console.log("useerbalance variable:", userbalance)
         return data
     }
 
