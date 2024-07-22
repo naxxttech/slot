@@ -265,10 +265,10 @@ class Game {
      /**
          * calculate_results: oyunun kazanma durumunu belirler
     */
-    calculate_results() {
+    async calculate_results() {
 
         let data = { 
-        
+            
             win: false,
             winType: "",
             winningPaylines: [],
@@ -355,13 +355,32 @@ class Game {
         if (data.win) {
 
             data.winType = "Win"
+
         } else {
 
             data.winType = "Lose"
         }
-        const userbalance = this.pay(data.winType, this.bet).then(response => console.log("payout user balance:", response))
-        console.log("useerbalance variable:", userbalance)
+
+        // add user's balance into response object
+        const payment_object = await this.pay(data.winType, this.bet)
+        
+        const { code } = payment_object
+
+        if (code === 200) {
+
+            const { BalanceBefore, BalanceAfter } = payment_object.resource
+                
+            data.user = {
+
+                id: this.user.playerId,
+                balance: BalanceAfter
+            }
+
+        }
+
         return data
+    
+   
     }
 
 }
