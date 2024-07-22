@@ -74,10 +74,10 @@ Follow these steps to clone the project to your local environment.
                  // get user balance
                  socket.emit("fetchBalance", (args) => { /* handle args here*/ }
 
-                 const gameId = "the game id"
                  const payload = {
                        requestedLines: 10,
-                       gameId: gameId
+                       gameId: "your game id",
+                       bet: 100
                 }
    
                  // handle spin and get win / lose / bet results 
