@@ -1,17 +1,17 @@
 const symbols  = [
-    { id: 0, reel: "ACE", probability: 0.2 }, 
-    { id: 1, reel: "ANCHOR", probability: 0.2 }, 
+    { id: 0, reel: "ACE", probability: 0.1 }, 
+    { id: 1, reel: "ANCHOR", probability: 0.1 }, 
     { id: 2, reel: 'FISH', probability: 0.1 }, 
     { id: 3, reel: 'HORSE', probability: 0.1 }, 
     { id: 4, reel: 'JACK', probability: 0.1 }, 
-    { id: 5, reel: 'KING', probability: 0.04}, 
-    { id: 6, reel: "NINE", probability: 0.03 }, 
-    { id: 7, reel: "QUEEN", probability: 0.01 }, 
-    { id: 8, reel: "SCATTER", probability: 0.01 },
-    { id: 9, reel: "SHELL", probability: 0.01 },
-    { id: 10, reel: "STAR", probability: 0.01 },
-    { id: 11, reel: "TEN", probability: 0.01 },
-    { id: 12, reel: "WILD", probability: 0.01 }
+    { id: 5, reel: 'KING', probability: 0.1}, 
+    { id: 6, reel: "NINE", probability: 0.1 }, 
+    { id: 7, reel: "QUEEN", probability: 0.1 }, 
+    { id: 8, reel: "SCATTER", probability: 0.1 },
+    { id: 9, reel: "SHELL", probability: 0.1 },
+    { id: 10, reel: "STAR", probability: 0.1 },
+    { id: 11, reel: "TEN", probability: 0.1 },
+    { id: 12, reel: "WILD", probability: 0.1 }
 ];
 
 
