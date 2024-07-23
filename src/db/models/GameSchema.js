@@ -23,7 +23,7 @@ const GameSchema = new Schema({
     ],
     // validation for vol: high, medium
     volalitiy: { type: String, default: "low"},
-    provider: { type: String }
+    provider: { type: String, default: "sportsbook" }
 
 }, {
 
@@ -90,7 +90,7 @@ const getGameById = async (gameId) => {
 
     try {
 
-        const game_object = await model.findOne({ gameId })
+        const game_object = await model.findOne({ id: gameId })
 
         if (game_object === null) {
 
@@ -135,7 +135,7 @@ const deleteGameById = async (gameId) => {
 
     try {
         
-        const game_object = await model.findOne({ gameId })
+        const game_object = await model.findOne({ id: gameId })
 
         if (game_object === null) {
 
@@ -185,7 +185,7 @@ const create_new_game = async (body) => {
         resource:{}
     }
 
-    if (!body.name) {
+    if (!body.gameName) {
 
         init_data.message = "Game Name is required"
         return init_data
@@ -204,13 +204,14 @@ const create_new_game = async (body) => {
     try {
 
         // değişecek burası
-        const random_game_id = Math.floor(Math.random() * 2341213)
+        // const random_game_id = Math.floor(Math.random() * 2341213)
        
         const payload = {
 
-            id: random_game_id,
-            name: body.name,
+            id: body.game_id,
+            name: body.gameName,
             volalitiy: body.volalitiy,
+            provider: body.game_provider
 
         }
 
@@ -250,9 +251,9 @@ const update_game = async (new_entries) => {
     }
 
     // add paytable validation later
-    const { gameId, gameName, volalitiy, paytable } = new_entries
+    const { id, name, volalitiy, paytable } = new_entries
 
-    if (!gameName || !volalitiy) {
+    if (!name || !volalitiy) {
 
         init_data.code = 400
         init_data.message = "All fields must be filled."
@@ -266,7 +267,7 @@ const update_game = async (new_entries) => {
         return init_data
     }
 
-     const new_doc = await model.findOneAndUpdate({ gameId: gameId}, new_entries, { new: true })
+     const new_doc = await model.findOneAndUpdate({ id }, new_entries, { new: true })
    
 
     init_data.message = "Succesfully updated"
