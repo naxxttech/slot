@@ -37,6 +37,8 @@ Follow these steps to clone the project to your local environment.
       MONGO_URI_TESTSV=mongodb://test_server:27017/dbname
       MONGO_URI_CLOUD=""
       BETAPI=https://ostageapi.mbit24.com/
+      COOKIESCT=uhamzcvQeRtquWx12!a_vyhm
+      AUTHHEADER=myname
       ```
 
    <p>Great, you set your env variables. Now, go to the `src/db/connect.js` file and specify which mongo uri connection you want to connect to mongo client.</p>
