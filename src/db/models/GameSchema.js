@@ -8,8 +8,8 @@ const { Schema } = mongoose;
 // const DataSchema = require("./Relation")
 const GameSchema = new Schema({
   
-    gameId: { type: String, required: true }, // Game ID or reference
-    gameName: { type: String, required: true }, 
+    id: { type: String, required: true }, // Game ID or reference
+    name: { type: String, required: true }, 
     paylines: { type: [[Number | String]] },  // Array of arrays representing paylines
     rows: { type: Number, default: 5},
     cols: { type: Number, default: 3},
@@ -22,7 +22,8 @@ const GameSchema = new Schema({
             }
     ],
     // validation for vol: high, medium
-    volalitiy: { type: String, default: "low"}
+    volalitiy: { type: String, default: "low"},
+    provider: { type: String }
 
 }, {
 
@@ -184,7 +185,7 @@ const create_new_game = async (body) => {
         resource:{}
     }
 
-    if (!body.gameName) {
+    if (!body.name) {
 
         init_data.message = "Game Name is required"
         return init_data
@@ -202,12 +203,13 @@ const create_new_game = async (body) => {
      /* VALIDATION BURADA BAŞLAR */
     try {
 
+        // değişecek burası
         const random_game_id = Math.floor(Math.random() * 2341213)
        
         const payload = {
 
-            gameId: random_game_id,
-            gameName: body.gameName,
+            id: random_game_id,
+            name: body.name,
             volalitiy: body.volalitiy,
 
         }
