@@ -3,6 +3,7 @@
 const authMiddleware = (request, response, next) => {
     const authHeader = request.headers['auth']; 
     const expectedAuthValue = process.env["AUTHHEADER"]
+
     
     if (authHeader === expectedAuthValue) {
 
