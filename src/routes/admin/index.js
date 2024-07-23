@@ -1,6 +1,8 @@
 const express = require("express")
 const router = express.Router()
 
+
+const secureAuth = require("../../middlewares/secure-auth")
 const { getAllGames, getGameById, create_new_game, update_game, deleteGameById } = require("../../db/models/GameSchema")
 
 
@@ -21,7 +23,7 @@ router.get("/", async (request, response) => {
 
 
 // this route gets all game entities
-router.get("/resource/all", async (request, response) => {
+router.get("/resource/all", secureAuth, async (request, response) => {
 
 
         const games_object = await getAllGames()
@@ -34,7 +36,7 @@ router.get("/resource/all", async (request, response) => {
 
 
 // this route gets game entity
-router.get("/resource/get/:gameId", async (request, response) => {
+router.get("/resource/get/:gameId", async (request, response, next) => {
 
     const { gameId } = request.params 
     const { data } = request.query
@@ -57,7 +59,17 @@ router.get("/resource/get/:gameId", async (request, response) => {
 
     } else {
 
-        return response.status(game_object.code).json(game_object)
+        const authHeader = request.headers['auth']; 
+        const expectedAuthValue = process.env["AUTHHEADER"]
+
+        if (authHeader === expectedAuthValue) {
+
+            return response.status(game_object.code).json(game_object)
+    
+        }
+
+
+         response.status(403).json({ message: 'Forbidden: Invalid auth token' });
     }
 
 
