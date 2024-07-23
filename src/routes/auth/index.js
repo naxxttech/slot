@@ -3,18 +3,26 @@ const router = express.Router()
 
 const secureAuth = require("../../middlewares/secure-auth")
 
-router.get("/test", async (request, response) => {
+router.get("/check-session", async (request, response) => {
     console.log("USER?", request.session.user)
 
 
-    response.json(request.session.user || "no user")
+    response.json(request.session.user || "no session user")
 
 })
 
 router.post("/create-session", secureAuth, async (request, response) => {
 
-    const { bank, currency, id, nickname, externaltoken, gameid} = request.body
     const response_object = { msg: "", sessionId: ""}
+
+    if (request.headers['content-type'] !== 'application/json') {
+
+        response_object.msg = "Content-Type must be application/json"
+        return response(400).json(response_object);
+      }
+
+
+    const { bank, currency, id, nickname, externaltoken, gameid} = request.body
 
     if (!bank || !currency || !id || !externaltoken || !gameid) {
 

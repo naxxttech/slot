@@ -95,18 +95,19 @@ router.get("/resource/create/new/item", async (request, response) => {
 })
 
 
-// this route updates game entities
+// this route updates game entities (broken for now.)
 router.post("/resource/get/:gameId/set/items", async (request, response) => {
     
+    console.log("body", request.body)
     
     const { gameId } = request.params
 
    
     const game_object = await getGameById(gameId)
-
+    console.log("err:", game_object)
     if (game_object.code != 200) {
 
-        return response.status(game_object.code).redirect(`/admin/resource/get/${game_object.resource.gameId}?data=raw`)
+        return response.status(game_object.code).redirect(`/admin/resource/get/${game_object.resource.id}?data=raw`)
 
     } else {
 
@@ -115,13 +116,14 @@ router.post("/resource/get/:gameId/set/items", async (request, response) => {
         // eğer update atarken bir sorun olmuşsa
         if (new_game_object.code != 201) {
 
+            console.log("err:", new_game_object)
             response.locals.error = new_game_object.message;
         } else {
 
             response.locals.success = new_game_object.message
         }
 
-        return response.status(new_game_object.code).redirect(`/admin/resource/get/${game_object.resource.gameId}?data=raw`)
+        return response.status(new_game_object.code).redirect(`/admin/resource/get/${game_object.resource.id}?data=raw`)
     }
 })
 
