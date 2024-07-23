@@ -11,17 +11,22 @@ const dynamicURLs = require("../middlewares/seturl")
 const session = require('express-session')
 
 // use session
-app.use(session({
+
+const min20 = 20 * 60 * 1000
+const min1 = 1 * 60 * 1000
+
+const sessionMiddleWare = session({
 
     secret: process.env["COOKIESCT"],
     resave: false,
     saveUninitialized: false,
     cookie: { 
         secure: false,
-        maxAge: 1 * 60 * 60 * 1000 // Oturum süresini 1 saat ayarla
+        maxAge: min20 // oturum süresi 20 dk
     }
-}));
+})
 
+app.use(sessionMiddleWare)
 // urls
 app.use(dynamicURLs)
 // static paths
