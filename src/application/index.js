@@ -8,7 +8,19 @@ const app = express()
 const server = http.createServer(app);
 const configureRoutes = require("../routes/routes.config")
 const dynamicURLs = require("../middlewares/seturl")
+const session = require('express-session')
 
+// use session
+app.use(session({
+
+    secret: process.env["COOKIESCT"],
+    resave: false,
+    saveUninitialized: false,
+    cookie: { 
+        secure: false,
+        maxAge: 1 * 60 * 60 * 1000 // Oturum süresini 1 saat ayarla
+    }
+}));
 
 // urls
 app.use(dynamicURLs)
