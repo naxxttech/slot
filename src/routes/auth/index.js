@@ -2,42 +2,22 @@ const express = require("express")
 const router = express.Router()
 
 const secureAuth = require("../../middlewares/secure-auth")
+const { create_session, get_session } = require("../../db/models/Session")
 
 router.get("/check-session", async (request, response) => {
 
     const { sessionId } = request.query
 
-    if (sessionId || request.session.user) {
-
-        const store = request.sessionStore
-
-        let session_id;
-
-        if (sessionId) {
-
-            session_id = sessionId
-
-        } else {
-
-            session_id = request.session.id
-        }
-
-        store.get(session_id, (error, session) => {
-
-            if (error || !session) {
-
-                response.status(404).json({ message: 'Session not found or expired' });
-
-            } else {
-                console.log("USER?", session.user)
-                response.status(200).json({ sessionId: sessionId, user: session.user });
-            }
-        })
-
-
-    } 
     
+    if (sessionId) {
 
+        const session = await get_session(sessionId)
+
+        return response.status(session.code).json(session)
+    }
+
+
+    return response.status(400).json({ message: "Invalid request query."})
    
 
 })
@@ -61,17 +41,26 @@ router.post("/create-session", secureAuth, async (request, response) => {
         return response.status(400).json(response_object)
     }
 
-    console.log("USER?", request.session.user)
-
-    request.session.user = { bank, currency, id, externaltoken, gameid }
+    const payload = { ...request.body }
 
     if (nickname) {
-            request.session.user.nickname = nickname
+        payload.user_nickname = nickname
+    
     }
 
-    response_object.msg = "OK"
-    response_object.sessionId = request.sessionID
-    response.status(201).json(response_object)
+    payload.user_id = id
+    delete payload.id
+
+    const new_session = await create_session(payload)
+
+    if (new_session.code === 201) {
+
+        return response.status(new_session.code).json({ message: new_session.message, sessionId: new_session.resource.sessionId })
+
+    } else {
+
+        return response.status(new_session.code).json(new_session)
+    }
 })
 
 
