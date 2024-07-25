@@ -1,7 +1,10 @@
-require('module-alias/register')
-require('dotenv').config()
+const path = require("path")
 
-const { server, application_status } = require("./application/index")
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
+//require('dotenv').config()
+
+const { server, application_status, sessionMiddleWare } = require("./application/index")
+
 const ngrok = require("ngrok")
 // our db
 const connectdb = require("./db/connect")
@@ -24,9 +27,8 @@ const cmd_logs = [cmd_info.homeRefeerer, cmd_info.api, cmd_info.dashboard]
 server.listen(port, () => {
 
     console.log(cmd_logs.join("\n"))
-
     // start socket
-    createSocket(server)
+    createSocket(server, sessionMiddleWare)
 
     /*
     if (developmentMode) {
