@@ -46,7 +46,7 @@
                         <hr>
 
                         <ul>
-                                <% data.games.forEach(game => { %>
+                                <% data.games?.forEach(game => { %>
                                 
                                     <li>
                                         <a href="<%=link%>/admin/resource/get/<%= game.id %>?data=raw">
