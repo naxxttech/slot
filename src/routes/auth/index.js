@@ -2,7 +2,7 @@ const express = require("express")
 const router = express.Router()
 
 const secureAuth = require("../../middlewares/secure-auth")
-const { create_session, get_session } = require("../../db/models/Session")
+const { create_session, get_session, get_active_session } = require("../../db/models/Session")
 
 router.get("/check-session", async (request, response) => {
 
@@ -41,6 +41,7 @@ router.post("/create-session", secureAuth, async (request, response) => {
         return response.status(400).json(response_object)
     }
 
+
     const payload = { ...request.body }
 
     if (nickname) {
@@ -50,6 +51,15 @@ router.post("/create-session", secureAuth, async (request, response) => {
 
     payload.user_id = id
     delete payload.id
+
+
+    // do this user already have session? 
+    const user_session = await get_active_session(payload)
+
+    if (user_session.code != 404) {
+
+        return response.status(user_session.code).json({ message: user_session.message, sessionId: user_session.resource.sessionId })
+    }
 
     const new_session = await create_session(payload)
 
