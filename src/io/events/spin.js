@@ -1,4 +1,5 @@
 const SlotGame = require("../../base/game.config")
+const extend_session = require("../helpers/extend.session")
 
 const handleSpin = (socket) => {
 
@@ -7,8 +8,9 @@ const handleSpin = (socket) => {
         
         console.log("SPIN RECEIVED:", data, "socket ID:", socket.request.session)
 
-        const { user_id, gameid } = socket.request.session
+        const { id, user_id, gameid } = socket.request.session
 
+        await extend_session(socket, id)
 
         const { requestedLines, bet } = data
 
