@@ -61,24 +61,23 @@ Follow these steps to clone the project to your local environment.
    }
    ```
    ### WebSocket Configuration
-   <p>In order to interact with API from client side you must send sessionId and playerId as payload on WebSocket.</p>
+   <p>In order to interact with API from client side you must set  withCredentials true.</p>
    
    ```html
         <script>
                  // socket configuration
-                  const socket = io({
-                      auth: {
-                          sessionId: "jmkqikvucqw2z93",
-                          playerId: "frmtest"
-                      }
-                  });
+                    const socket = io("http://localhost:3000/",{
+
+                        withCredentials: true
+                    });
    
                  // get user balance
                  socket.emit("fetchBalance", (args) => { /* handle args here*/ }
 
+                // spin request
                  const payload = {
+
                        requestedLines: 10,
-                       gameId: "your game id",
                        bet: 100
                 }
    
