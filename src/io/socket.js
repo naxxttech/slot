@@ -3,6 +3,7 @@ const socket = require("socket.io")
 const spin = require("./events/spin")
 const balance = require("./events/balance")
 const disconnect = require("./events/disconnect")
+const { get_session } = require("../db/models/Session")
 
 const initializeSocket = (server, sessionMiddleWare) => {
         // socket config
@@ -19,52 +20,58 @@ const initializeSocket = (server, sessionMiddleWare) => {
         // use session
         io.engine.use(sessionMiddleWare)
    
-        // Middleware for secured connection
         /*
         io.use((socket, next) => {
+                console.log("socket:", socket.handshake.auth)
+                const session = socket.handshake.auth.session
 
-            const sessionId = socket.handshake.auth.sessionId
-            const playerId = socket.handshake.auth.playerId
-
-            if (!sessionId) {
-                socket.disconnect()
-                return next(new Error('Session ID Error'));
-            }
-
-
-            if (!playerId) {
-                socket.disconnect()
-                return next(new Error('Not valid Player ID'));
-            }
-
-            socket.user = { sessionId, playerId }
-            next()
-        });
-        */
-
-        io.use((socket, next) => {
-
-                const user = socket.request.session.user
-            
+                socket.request.session = { id: session }
+                
+                console.log("ojb", socket.request.session)
+               
+              
+                const user = false
 
                 if (!user) {
 
+                  
+                    socket.disconnect()
                     return next(new Error('Not valid Session'));
                 }
-          
-                console.log("SESSION OBJECT IN SOCKET:", socket.request.session)
+                       console.log("SESSION OBJECT IN SOCKET:", socket.request.session)
+           
+   
+    
                 next()
         })
-        
+        */
         // events
-        io.on("connection", (socket) => {
+        io.on("connection", async (socket) => {
+            
+            const { id } = socket.handshake.auth
+            console.log("[Socket] received session id:", id)
 
-            const { id } = socket.request.session.user
-            console.log(`[SOCKET] Session: [${socket.request.session.id}] - Player ID: ${id} just connected`)
+            const validate_session = await get_session(id)
 
-             balance(socket)
+            if (validate_session.code === 200) {
+
+                const { user_id, gameid } = validate_session.resource
+                // create socket session here
+                socket.request.session = { id: id, user_id, gameid }
+                console.log(`[Socket] - ${socket.request.session.id} - Player ID: ${user_id} Game ID: ${gameid} just connected`)
+            } else {
+
+                // bağlantıyı kapat
+                socket.emit('error', { message: validate_session.message });
+                socket.disconnect()
+                return
+            }
+       
+            console.log("query result:", validate_session.resource)
+
+            //  balance(socket)
              spin(socket)
-            // disconnect(socket)
+             disconnect(socket)
 
         })
 

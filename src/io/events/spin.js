@@ -4,11 +4,11 @@ const handleSpin = (socket) => {
 
 
     socket.on("spin", async (data, cb) => {
+        
+        console.log("SPIN RECEIVED:", data, "socket ID:", socket.request.session)
 
-        console.log("SPIN RECEIVED:", data)
+        const { user_id, gameid } = socket.request.session
 
-        const { gameid } = socket.request.session.user
-        const playerId = socket.request.session.user.id
 
         const { requestedLines, bet } = data
 
@@ -20,7 +20,7 @@ const handleSpin = (socket) => {
         }
         */
        
-        const round = new SlotGame(gameid, playerId, bet)
+        const round = new SlotGame(gameid, user_id, bet)
         const roundResult = await round.start_game(requestedLines)
 
         cb?.(roundResult)

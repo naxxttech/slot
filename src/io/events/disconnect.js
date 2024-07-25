@@ -2,11 +2,11 @@
 
 const handleDisconnect = (socket) => {
 
-    const { id } = socket.request.session.user
+    const { id, user_id, gameid } = socket.request.session
 
     socket.on("disconnect", () => {
         // user disconnect for some reason create game history in here
-        console.log(`[${socket.request.session.id}] - Player ID: ${id} jusr disconnect`)
+        console.log(`[Socket] - ${id}  Player ID: ${user_id} Game ID: ${gameid} just disconnect`)
     
     })
 }
