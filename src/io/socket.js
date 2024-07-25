@@ -20,31 +20,9 @@ const initializeSocket = (server, sessionMiddleWare) => {
         // use session
         io.engine.use(sessionMiddleWare)
    
-        /*
-        io.use((socket, next) => {
-                console.log("socket:", socket.handshake.auth)
-                const session = socket.handshake.auth.session
 
-                socket.request.session = { id: session }
-                
-                console.log("ojb", socket.request.session)
-               
-              
-                const user = false
 
-                if (!user) {
 
-                  
-                    socket.disconnect()
-                    return next(new Error('Not valid Session'));
-                }
-                       console.log("SESSION OBJECT IN SOCKET:", socket.request.session)
-           
-   
-    
-                next()
-        })
-        */
         // events
         io.on("connection", async (socket) => {
             
@@ -59,16 +37,25 @@ const initializeSocket = (server, sessionMiddleWare) => {
                 // create socket session here
                 socket.request.session = { id: id, user_id, gameid }
                 console.log(`[Socket] - ${socket.request.session.id} - Player ID: ${user_id} Game ID: ${gameid} just connected`)
+
+                // expiresAt'ı güncelle
+                const newExpiryDate = new Date(Date.now() + 20 * 60 * 1000); // 20 dk
+                validate_session.resource.expiredAt = newExpiryDate
+                await validate_session.resource.save()
+                
             } else {
 
-                // bağlantıyı kapat
-                socket.emit('error', { message: validate_session.message });
+                // session geçersiz bağlantıyı kapat
+                //socket.emit('error', { message: validate_session.message });
                 socket.disconnect()
                 return
             }
-       
+
             console.log("query result:", validate_session.resource)
 
+      
+
+      
             //  balance(socket)
              spin(socket)
              disconnect(socket)
