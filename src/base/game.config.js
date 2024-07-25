@@ -41,6 +41,8 @@ class Game {
 
 
     async check_user_balance() {
+ 
+           return { code: 200, message: null, resource: { Amount: 54232} }
 
            const { playerId, sessionId } = this.user
            const betAPI = process.env["BETAPI"]
