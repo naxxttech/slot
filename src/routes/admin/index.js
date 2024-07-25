@@ -8,7 +8,6 @@ const { getAllGames, getGameById, create_new_game, update_game, deleteGameById }
 
 
 router.get("/", async (request, response) => {
-
     //console.log("REQUEST USER IN SITE OBJECT:", request.session.user)
     const context = {}
     const games_object = await getAllGames()
