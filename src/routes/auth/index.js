@@ -4,10 +4,41 @@ const router = express.Router()
 const secureAuth = require("../../middlewares/secure-auth")
 
 router.get("/check-session", async (request, response) => {
-    console.log("USER?", request.session.user)
+
+    const { sessionId } = request.query
+
+    if (sessionId || request.session.user) {
+
+        const store = request.sessionStore
+
+        let session_id;
+
+        if (sessionId) {
+
+            session_id = sessionId
+
+        } else {
+
+            session_id = request.session.id
+        }
+
+        store.get(session_id, (error, session) => {
+
+            if (error || !session) {
+
+                response.status(404).json({ message: 'Session not found or expired' });
+
+            } else {
+                console.log("USER?", session.user)
+                response.status(200).json({ sessionId: sessionId, user: session.user });
+            }
+        })
 
 
-    response.json(request.session.user || "no session user")
+    } 
+    
+
+   
 
 })
 
@@ -18,7 +49,7 @@ router.post("/create-session", secureAuth, async (request, response) => {
     if (request.headers['content-type'] !== 'application/json') {
 
         response_object.msg = "Content-Type must be application/json"
-        return response(400).json(response_object);
+        return response.status(400).json(response_object);
       }
 
 
