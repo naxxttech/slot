@@ -26,6 +26,7 @@ const sessionMiddleWare = session({
     }
 })
 
+
 app.use(sessionMiddleWare)
 // urls
 app.use(dynamicURLs)
@@ -71,4 +72,4 @@ const application_status = {
 
 
 
-module.exports = { server, application_status }
+module.exports = { server, application_status, sessionMiddleWare }
