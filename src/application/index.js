@@ -16,13 +16,14 @@ const min20 = 20 * 60 * 1000
 const min1 = 1 * 60 * 1000
 
 const sessionMiddleWare = session({
-
+    name: "bs1",
     secret: process.env["COOKIESCT"],
     resave: false,
     saveUninitialized: false,
     cookie: { 
         secure: false,
-        maxAge: min20 // oturum süresi 20 dk
+        maxAge: min20, // oturum süresi 20 dk
+        httpOnly: false
     }
 })
 
