@@ -4,8 +4,7 @@ const spin = require("./events/spin")
 const balance = require("./events/balance")
 const disconnect = require("./events/disconnect")
 
-
-const initializeSocket = (server) => {
+const initializeSocket = (server, sessionMiddleWare) => {
         // socket config
         const io = new socket.Server(server, {
 
@@ -17,7 +16,11 @@ const initializeSocket = (server) => {
                 */
         })
 
+        // use session
+        io.engine.use(sessionMiddleWare)
+   
         // Middleware for secured connection
+        /*
         io.use((socket, next) => {
 
             const sessionId = socket.handshake.auth.sessionId
@@ -37,15 +40,31 @@ const initializeSocket = (server) => {
             socket.user = { sessionId, playerId }
             next()
         });
+        */
 
+        io.use((socket, next) => {
+
+                const user = socket.request.session.user
+            
+
+                if (!user) {
+
+                    return next(new Error('Not valid Session'));
+                }
+          
+                console.log("SESSION OBJECT IN SOCKET:", socket.request.session)
+                next()
+        })
+        
         // events
         io.on("connection", (socket) => {
-            
-            console.log(`[${socket.user.sessionId}] -`, "User just connected")
 
-            balance(socket)
-            spin(socket)
-            disconnect(socket)
+            const { id } = socket.request.session.user
+            console.log(`[SOCKET] Session: [${socket.request.session.id}] - Player ID: ${id} just connected`)
+
+             balance(socket)
+             spin(socket)
+            // disconnect(socket)
 
         })
 
