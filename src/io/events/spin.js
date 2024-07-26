@@ -31,9 +31,9 @@ const handleSpin = (socket) => {
 
         cb?.(roundResult)
 
-    })
+    }, socket)
 
- }, socket)
+ })
 }
 
 

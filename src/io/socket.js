@@ -5,6 +5,7 @@ const balance = require("./events/balance")
 const disconnect = require("./events/disconnect")
 const extend_session = require("./helpers/extend.session")
 const handleErrorsIfAny = require("./helpers/handle.socket.errors")
+const { get_game_history } = require("../db/models/GameHistory")
 
 
 const initializeSocket = (server, sessionMiddleWare) => {
@@ -49,7 +50,11 @@ const initializeSocket = (server, sessionMiddleWare) => {
                              currency: socket.request.session.currency,
                              balance: 1421
                         }
+                        
                         // send user data such as game history, id etc.
+                        const game_history = await get_game_history(socket.request.session.gameid)
+                        user_data.history = game_history
+
                         socket.emit("userData", user_data)
                         //  balance(socket)
                         spin(socket)
