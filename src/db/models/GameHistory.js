@@ -36,7 +36,8 @@ const create_game_history = async (data, extra) => {
             totalPayout
         }
 
-        await model.findOneAndUpdate({ game_id: gameId}, entries)
+        const history = new model(entries)
+        await history.save()
 
     } catch (error) {
         
