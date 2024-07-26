@@ -1,11 +1,15 @@
 const SlotGame = require("../../base/game.config")
 const extend_session = require("../helpers/extend.session")
+const handleErrorsIfAny = require("../helpers/handle.socket.errors")
+
 
 const handleSpin = (socket) => {
 
 
     socket.on("spin", async (data, cb) => {
         
+        await handleErrorsIfAny(async () => {
+
         console.log("SPIN RECEIVED:", data, "socket ID:", socket.request.session)
 
         const { id, user_id, gameid } = socket.request.session
@@ -28,6 +32,8 @@ const handleSpin = (socket) => {
         cb?.(roundResult)
 
     })
+
+ }, socket)
 }
 
 

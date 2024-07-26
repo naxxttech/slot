@@ -16,10 +16,11 @@ const extend_session = async (socket, sessionId) => {
 
        console.log(`[${sessionId}] extended`)
 
+       return true
+
     } else {
 
-        socket.disconnect()
-        return
+        throw new Error(`Session ID: ${sessionId} could not found. It might expired.`)
     }
 }
 

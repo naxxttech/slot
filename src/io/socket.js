@@ -3,8 +3,9 @@ const socket = require("socket.io")
 const spin = require("./events/spin")
 const balance = require("./events/balance")
 const disconnect = require("./events/disconnect")
-const { get_session } = require("../db/models/Session")
 const extend_session = require("./helpers/extend.session")
+const handleErrorsIfAny = require("./helpers/handle.socket.errors")
+
 
 const initializeSocket = (server, sessionMiddleWare) => {
         // socket config
@@ -27,23 +28,30 @@ const initializeSocket = (server, sessionMiddleWare) => {
         // events
         io.on("connection", async (socket) => {
             
+
+
+          await handleErrorsIfAny(async () => {
+
             const { id } = socket.handshake.auth
             console.log("[connection] socket received session id:", id)
+            console.log("socket session:", socket.request?.session)
 
-            await extend_session(socket, id)
+            const result = await extend_session(socket, id)
                 
-            // user datasını gönder, history vs.
-            socket.emit("userData", {})
-            console.log("trg")
-            console.log("socket session:", socket.request.session)
+            if (result) {
 
+                        // user datasını gönder, history vs.
+                        socket.emit("userData", {})
+                        //  balance(socket)
+                        spin(socket)
+                        disconnect(socket)
+
+            }
       
+        }, socket)
 
-            //  balance(socket)
-             spin(socket)
-             disconnect(socket)
 
-        })
+   })
 
 
 }
