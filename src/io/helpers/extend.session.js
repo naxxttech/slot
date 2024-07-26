@@ -6,9 +6,9 @@ const extend_session = async (socket, sessionId) => {
 
     if (session_object.code === 200) {
 
-        const { user_id, gameid } = session_object.resource
+        const { user_id, gameid, currency } = session_object.resource
         // create socket session here
-        socket.request.session = { id: sessionId, user_id, gameid }
+        socket.request.session = { id: sessionId, user_id, gameid, currency }
        // expiresAt'ı güncelle
        const newExpiryDate = new Date(Date.now() + 20 * 60 * 1000); // 20 dk
        session_object.resource.expiredAt = newExpiryDate
