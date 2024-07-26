@@ -58,6 +58,23 @@
                         </ul>
 
                     </div>
+
+
+                    <div class="mt-4 text-justify">
+                        
+                        <div class="d-flex justify-space-around align-items-center">
+
+                            <h5 class="m-0 ps-3">Sessions</h5>
+
+                            <div class="ms-auto">
+                                <a onclick="generateSampleSession()" href="javascript:void(0)">+</a>
+                            </div>
+                      
+                        </div>
+            
+                        <hr>
+
+                    </div>
                     
                 </div>
 
@@ -90,6 +107,51 @@
                         }
         });
             
+
+
+       async function generateSampleSession() {
+
+
+            try {
+                
+            const randomPlayerId = Math.floor(Math.random() * 2323131).toString()
+            const request = await fetch(`<%=link%>/auth/create-session`, {
+
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json",
+                    "auth": "myheader"
+                },
+
+                body: JSON.stringify({
+
+                    bank: "Stage",
+                    currency: "EUR",
+                    id: randomPlayerId,
+                    nickname: "Some nickname",
+                    externaltoken: "somerandomtoken",
+                    gameid: "oceantale_gt_html",
+                    name: "Ocean Tale"
+
+                })
+            })
+
+            const response = await request.json()
+
+            console.log("Resp:", response)
+            if (request.status === 201) {
+
+                alert(`Generated new session: ${response.sessionId}`)
+            } 
+
+            } catch (error) {
+                
+                console.log("[GENERATE SESSION]", error)
+                alert("Something went wrong while creating new session.")
+
+            }
+
+        }
 
         </script>
     </body>

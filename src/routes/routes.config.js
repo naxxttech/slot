@@ -1,7 +1,7 @@
 const homeRouter = require("./home/index")
 const adminRouter = require("./admin/index")
 const gameRouter = require("./game/index");
-const authRouter = require("./auth/index")
+const authRouter = require("./auth/index");
 
 
 

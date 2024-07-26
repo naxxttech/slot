@@ -66,7 +66,7 @@ router.post("/create-session", secureAuth, async (request, response) => {
     const new_session = await create_session(payload)
 
     if (new_session.code === 201) {
-
+        console.log("new session:", new_session)
         return response.status(new_session.code).json({ message: new_session.message, sessionId: new_session.resource.sessionId })
 
     } else {
