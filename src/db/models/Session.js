@@ -3,7 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 
 const { Schema } = mongoose;
 
-
+const createResponseObject = require("../../helpers/create.response");
 
 
 // const DataSchema = require("./Relation")
@@ -31,8 +31,6 @@ const model = mongoose.model('Session', SessionSchema);
 
 const create_session = async (body) => {
 
-    const response_object = { code: null, message: "", resource: null }
-
     try {
 
         body.sessionId = uuidv4();
@@ -40,21 +38,17 @@ const create_session = async (body) => {
         const session = new model(body)
         await session.save()
 
-
-        response_object.code = 201
-        response_object.message = "OK"
-        response_object.resource = session
+        return createResponseObject(201, "OK", session)
         
     } catch (error) {
         
         console.log("[Create Session] Error:", error)
 
-        response_object.code = 500
-        response_object.message = "Something went wrong"
+
+        return createResponseObject(500, "Something went wrong")
     }
  
     
-    return response_object
 }
 
 
@@ -62,39 +56,29 @@ const create_session = async (body) => {
 
 const get_session = async (sessionId) => {
 
-    const response_object = { code: null, message: "", resource: null }
-
     try {
 
         const session = await model.findOne({ sessionId })
 
         if (!session) {
 
-            response_object.code = 404
-            response_object.message = "Session is not found"
-            return response_object
+            return createResponseObject(404, "Session is not found")
         }
 
-        response_object.code = 200
-        response_object.message = "OK"
-        response_object.resource = session
-        
+        return createResponseObject(200, "OK", session)
+
     } catch (error) {
         
-        console.log("[Create Session] Error:", error)
-
-        response_object.code = 500
-        response_object.message = "Something went wrong"
+        console.log("[Get Session] Error:", error)
+        return createResponseObject(500, "Something went wrong")
     }
  
     
-    return response_object
 }
 
 
 const get_active_session = async (body) => {
 
-    const response_object = { code: null, message: "", resource: null }
 
     try {
 
@@ -104,25 +88,19 @@ const get_active_session = async (body) => {
 
         if (!session) {
 
-            response_object.code = 404
-            response_object.message = "Session is not found or expired"
-            return response_object
+            return createResponseObject(404, "Session is not found or expired")
         }
 
-        response_object.code = 200
-        response_object.message = "OK"
-        response_object.resource = session
-        
+          return createResponseObject(200, "OK", session)
+
     } catch (error) {
         
         console.log("[Find Session] Error:", error)
 
-        response_object.code = 500
-        response_object.message = "Something went wrong"
+        return createResponseObject(500, "Something went wrong")
     }
  
-    
-    return response_object
+
 }
 
 
