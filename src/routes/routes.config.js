@@ -2,7 +2,7 @@ const homeRouter = require("./home/index")
 const adminRouter = require("./admin/index")
 const gameRouter = require("./game/index");
 const authRouter = require("./auth/index");
-
+const { errorHandler } = require("../helpers/handle.query.errors");
 
 
 
@@ -16,7 +16,7 @@ const configureRoutes = (app, prefix) => {
     app.use(`${prefix}/admin`, adminRouter);
     app.use(`${api_enpoint}/games`, gameRouter);
     app.use(`${api_enpoint}/auth`, authRouter);
-
+    app.use(errorHandler)
 
     // error page
     app.use((request, response, next) => {
