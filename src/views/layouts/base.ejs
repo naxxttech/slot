@@ -103,19 +103,24 @@
 
                         auth: {
 
-                            id: "37ad0243-a260-4d88-832f-759d4751b17e1"
+                            id: "37ad0243-a260-4d88-832f-759d4751b17e"
                         }
         });
             
 
+        socket.on("userData", data => {
+
+            console.log("received:", data)
+        })
+
+       let current_limit = 1
 
        async function generateSampleSession() {
-
 
             try {
                 
             const randomPlayerId = Math.floor(Math.random() * 2323131).toString()
-            const request = await fetch(`<%=link%>/auth/create-session`, {
+            const request = await fetch(`<%=link%>/api/v1/auth/create-session`, {
 
                 method: "POST",
                 headers: {
