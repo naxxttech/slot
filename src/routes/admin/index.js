@@ -77,7 +77,7 @@ router.get("/resource/get/:gameId", handlePotentialErrors(async (request, respon
 }))
 
 // this route deletes resource
-router.get("/resource/delete/:gameId", async (request, response) => {
+router.get("/resource/delete/:gameId", handlePotentialErrors(async (request, response) => {
 
     const operation = await deleteGameById(request.params.gameId)
 
@@ -88,7 +88,7 @@ router.get("/resource/delete/:gameId", async (request, response) => {
 
 
     return response.status(operation.code).json(operation)
-})
+}))
 
 // this route gets create game view
 router.get("/resource/create/new/item", async (request, response) => {
