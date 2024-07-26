@@ -1,3 +1,11 @@
+class HttpError extends Error {
+    constructor(statusCode, message) {
+      super(message);
+      this.statusCode = statusCode;
+    }
+  }
+
+
 const handlePotentialErrors = (fn) => (request, response, next) => {
     Promise.resolve(fn(request, response, next)).catch(next);
   };
@@ -5,10 +13,11 @@ const handlePotentialErrors = (fn) => (request, response, next) => {
 
 
   const errorHandler = (error, request, response, next) => {
-    console.error(error.stack);
+    console.error("stack:", error);
 
-    response.status(500).json({
-      success: false,
+    const statusCode = error.statusCode || 500
+    response.status(statusCode).json({
+      code: statusCode,
       message: error.message,
     });
   };
@@ -16,4 +25,4 @@ const handlePotentialErrors = (fn) => (request, response, next) => {
 
 
 
-  module.exports = { handlePotentialErrors, errorHandler }
+  module.exports = { handlePotentialErrors, errorHandler, HttpError }
