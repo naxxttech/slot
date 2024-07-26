@@ -73,7 +73,7 @@ const getGameById = async (gameId) => {
     try {
 
         // const game_object = await model.findOne({ id: gameId }).select('name provider')
-        const game_object = await model.findOne({ id: gameId }).select('name provider')
+        const game_object = await model.findOne({ id: gameId })
         
         if (game_object === null) {
 

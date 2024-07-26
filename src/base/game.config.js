@@ -4,6 +4,7 @@ const RNG = require("./symbol.picker")
 const make_api_request = require("../helpers/httpClient")
 const { getGameById } = require('../db/models/GameSchema')
 const { symbols, paylines, payTable } = require("./default.config")
+const { create_game_history } = require("../db/models/GameHistory")
 
 
 class Game {
@@ -331,6 +332,8 @@ class Game {
 
         }
 
+        // create game history
+        await create_game_history(data, { gameId: this.gameId, userId: this.user})
         return data
     
    
