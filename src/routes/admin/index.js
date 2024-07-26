@@ -4,7 +4,7 @@ const router = express.Router()
 
 const secureAuth = require("../../middlewares/secure-auth")
 const { getAllGames, getGameById, create_new_game, update_game, deleteGameById } = require("../../db/models/GameSchema")
-
+const { handlePotentialErrors } = require("../../helpers/handle.query.errors")
 
 
 router.get("/", async (request, response) => {
@@ -23,20 +23,21 @@ router.get("/", async (request, response) => {
 
 
 // this route gets all game entities
-router.get("/resource/all", secureAuth, async (request, response) => {
+router.get("/resource/all", secureAuth, handlePotentialErrors(async (request, response) => {
 
 
         const games_object = await getAllGames()
 
         return response.status(games_object.code).json(games_object)
 
-})
+}))
+
 
 
 
 
 // this route gets game entity
-router.get("/resource/get/:gameId", async (request, response, next) => {
+router.get("/resource/get/:gameId", handlePotentialErrors(async (request, response) => {
 
     const { gameId } = request.params 
     const { data } = request.query
@@ -73,7 +74,7 @@ router.get("/resource/get/:gameId", async (request, response, next) => {
     }
 
 
-})
+}))
 
 // this route deletes resource
 router.get("/resource/delete/:gameId", async (request, response) => {

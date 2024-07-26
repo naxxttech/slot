@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const createResponseObject = require("../../helpers/create.response");
 
 const { Schema } = mongoose;
 
@@ -41,29 +42,20 @@ const model = mongoose.model('Game', GameSchema);
 /** Gets all games. */
 const getAllGames = async () => {
 
-    const data = {
-
-        code: 200,
-        message: "",
-        resource: null
-    }
 
     try {
 
         const games_object = await model.find()
         
-        data.message = "OK"
-        data.resource = games_object
+        return createResponseObject(200, "OK", games_object)
 
     } catch (error) {
 
         console.log("[ALL GAMES] Error", error)
-        data.code = 500
-        data.message = "Something went wrong please try again in 5 minutes."
+
+        return createResponseObject(500, "Something went wrong")
     }
 
-
-    return data
 }
 
 /**
@@ -73,19 +65,9 @@ const getAllGames = async () => {
 const getGameById = async (gameId) => {
 
 
-
-    const init = {
-
-        code: 200,
-        message: "",
-        resource: null
-    }
-
     if (!gameId) {
-        
-        init.code = 400
-        init.message = "Missing Data: gameId"
-        return init
+        console.log("[getGameById] Missing parameter: game id")
+        return createResponseObject(400, "Invalid or missing parameters")
     }
 
     try {
@@ -94,25 +76,22 @@ const getGameById = async (gameId) => {
 
         if (game_object === null) {
 
-            init.code = 404
-            init.message = "Could not find requested resource."
+            return createResponseObject(404, "Could not find requested resource")
    
 
         } else {
 
-            init.message = "Resource found."
-            init.resource = game_object
+            return createResponseObject(200, "OK", game_object)
         }
 
     } catch (error) {
 
         console.log("[GET GAME] Error", error)
 
-        init.code = 500
-        init.message = "Something went wrong please try again in 5 minutes."
+        return createResponseObject(500, "Something went wrong")
+       
     }
 
-    return init
 }
 
 
