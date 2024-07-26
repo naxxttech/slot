@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const createResponseObject = require("../../helpers/create.response");
+const { HttpError } = require("../../helpers/handle.query.errors");
 
 const { Schema } = mongoose;
-
 
 
 
@@ -72,11 +72,12 @@ const getGameById = async (gameId) => {
 
     try {
 
-        const game_object = await model.findOne({ id: gameId })
-
+        // const game_object = await model.findOne({ id: gameId }).select('name provider')
+        const game_object = await model.findOne({ id: gameId }).select('name provider')
+        
         if (game_object === null) {
 
-            return createResponseObject(404, "Could not find requested resource")
+            throw new HttpError(404, "Could not find requested resource")
    
 
         } else {
@@ -87,8 +88,7 @@ const getGameById = async (gameId) => {
     } catch (error) {
 
         console.log("[GET GAME] Error", error)
-
-        return createResponseObject(500, "Something went wrong")
+        throw error
        
     }
 
@@ -97,18 +97,9 @@ const getGameById = async (gameId) => {
 
 const deleteGameById = async (gameId) => {
 
-    const init = {
-
-        code: 200,
-        message: "",
-        resource: null
-    }
-
     if (!gameId) {
         
-        init.code = 400
-        init.message = "Missing Data: gameId"
-        return init
+        throw new HttpError(400, "Invalid parameters")
     }
 
 
@@ -118,25 +109,21 @@ const deleteGameById = async (gameId) => {
 
         if (game_object === null) {
 
-            init.code = 404
-            init.message = "Could not find requested resource."
-   
+            throw new HttpError(404, "Could not find requested resource")
 
         } else {
 
-            init.message = "Resource found and has been deleted."
             await game_object.deleteOne()
+            createResponseObject(200, "OK")
         }
 
     } catch (error) {
 
         console.log("[DELETE GAME] Error", error)
 
-        init.code = 500
-        init.message = "Something went wrong please try again in 5 minutes."
+        throw error
     }
 
-    return init
 }
 
 
