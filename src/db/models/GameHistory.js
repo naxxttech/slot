@@ -8,7 +8,8 @@ const GameHistorySchema = new mongoose.Schema({
     user_name: { type: String},
     cells: { type: [[Number]], required: true },
     winningPaylines: { type: [], required: true},
-    totalPayout: { type: Number, required: true}
+    totalPayout: { type: Number, required: true},
+    collected: { type: Boolean, default: false }
 
 
 })
@@ -42,6 +43,7 @@ const create_game_history = async (data, extra) => {
     } catch (error) {
         
         console.log("Error while creating game history:", error)
+        throw new Error("Error while creating game history")
     }
 }
 
@@ -52,7 +54,8 @@ const get_game_history = async (gameId) => {
 
     try {
 
-        const history = await model.findOne({ game_id: gameId }).select("win cells winningPaylines totalPayout -_id")
+        // şimdilik en son oyunları al
+        const history = await model.findOne({ game_id: gameId }).sort({ _id: -1}).select("win cells winningPaylines totalPayout -_id")
 
         if (history === null) {
 
@@ -65,6 +68,7 @@ const get_game_history = async (gameId) => {
     } catch (error) {
         
         console.log("Error while creating game history:", error)
+        throw error
     }
 }
 
