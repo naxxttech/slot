@@ -15,6 +15,7 @@ const extend_session = async (socket, sessionId) => {
        await session_object.resource.save()
 
        console.log(`[${sessionId}] extended`)
+
     } else {
 
         socket.disconnect()

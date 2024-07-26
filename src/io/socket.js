@@ -31,11 +31,14 @@ const initializeSocket = (server, sessionMiddleWare) => {
             console.log("[connection] socket received session id:", id)
 
             await extend_session(socket, id)
+                
+            // user datasını gönder, history vs.
+            socket.emit("userData", {})
+            console.log("trg")
             console.log("socket session:", socket.request.session)
 
       
 
-      
             //  balance(socket)
              spin(socket)
              disconnect(socket)
