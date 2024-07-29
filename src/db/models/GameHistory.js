@@ -1,19 +1,23 @@
 const mongoose = require("mongoose");
 
+const winTypes = ['win', 'lose', 'collected', 'gambleWin', 'gambleLose']
+
 const GameHistorySchema = new mongoose.Schema({
 
-    win: { type: Boolean, required: true },
+    IP: { type: String },
+    win: { type: String, enum: { values: winTypes, message: '{VALUE} is not a valid enum'}, required: true },
     game_id: { type: String, required: true},
     user_id: { type: String, required: true },
     user_name: { type: String},
     cells: { type: [[Number]], required: true },
     winningPaylines: { type: [], required: true},
     totalPayout: { type: Number, required: true},
-    collected: { type: Boolean, default: false }
+    requestedLines: { type: Number },
+    bet: { type: Number }
 
-
+}, {
+    timestamps: true
 })
-
 
 
 const model = mongoose.model('Game History', GameHistorySchema);
@@ -24,17 +28,19 @@ const create_game_history = async (data, extra) => {
 
     try {
 
-        const { win, winningPaylines, cells, totalPayout } = data
-        const { gameId, userId } = extra
+        const { win, winType, winningPaylines, cells, totalPayout } = data
+        const { gameId, userId, requestedLines, bet } = extra
         
         const entries = {
 
-            win,
+            win: winType,
             game_id: gameId,
             user_id: userId,
             cells,
             winningPaylines,
-            totalPayout
+            totalPayout,
+            requestedLines,
+            bet
         }
 
         const history = new model(entries)
@@ -55,13 +61,7 @@ const get_game_history = async (gameId) => {
     try {
 
         // şimdilik en son oyunları al
-        const history = await model.findOne({ game_id: gameId }).sort({ _id: -1}).select("win cells winningPaylines totalPayout -_id")
-
-        if (history === null) {
-
-            throw new Error("Could not find any history")
-        }
-
+        const history = await model.findOne({ game_id: gameId }).sort({ _id: -1}).select("win cells winningPaylines totalPayout")
 
         return history
 

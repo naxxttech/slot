@@ -308,11 +308,11 @@ class Game {
         // test purposes
         if (data.win) {
 
-            data.winType = "Win"
+            data.winType = "win"
 
         } else {
 
-            data.winType = "Lose"
+            data.winType = "lose"
         }
 
         // add user's balance into response object
@@ -333,7 +333,7 @@ class Game {
         }
 
         // create game history
-        await create_game_history(data, { gameId: this.gameId, userId: this.user})
+        await create_game_history(data, { gameId: this.gameId, userId: this.user, requestedLines: this.requestedLines, bet: this.bet})
         return data
     
    
