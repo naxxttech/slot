@@ -239,8 +239,6 @@ class Game {
 
         let data = { 
             
-            win: false,
-            winType: "",
             winningPaylines: [],
             cells: [],
             totalPayout: 0
@@ -304,8 +302,6 @@ class Game {
                         }
                     });
 
-                    // mark as win
-                    data.win = true
                     data.totalPayout += linePayout
 
                 }
@@ -322,17 +318,17 @@ class Game {
         }
 
         // test purposes
-        if (data.win) {
+        if (data.winningPaylines.length) {
 
-            data.winType = "win"
+            data.status = "win"
 
         } else {
 
-            data.winType = "lose"
+            data.status = "lose"
         }
 
         // add user's balance into response object
-        const payment_object = await this.pay(data.winType, this.bet)
+        const payment_object = await this.pay(data.status, this.bet)
         
         const { code, BalanceBefore, BalanceAfter } = payment_object
 
