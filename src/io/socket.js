@@ -27,7 +27,7 @@ const initializeSocket = (server, sessionMiddleWare) => {
 
 
         // events
-        io.on("connection", async (socket) => {
+        io.on("connection", async (socket, cb) => {
             
 
 
@@ -62,7 +62,7 @@ const initializeSocket = (server, sessionMiddleWare) => {
 
             }
       
-        }, socket)
+        }, socket, cb)
 
 
    })

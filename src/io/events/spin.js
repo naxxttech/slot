@@ -28,10 +28,9 @@ const handleSpin = (socket) => {
        
         const round = new SlotGame(gameid, user_id, bet)
         const roundResult = await round.start_game(requestedLines)
-
-        cb?.(roundResult)
-
-    }, socket)
+            
+        return roundResult
+    }, socket, cb)
 
  })
 }
