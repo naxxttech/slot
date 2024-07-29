@@ -27,7 +27,7 @@ const initializeSocket = (server, sessionMiddleWare) => {
 
 
         // events
-        io.on("connection", async (socket, cb) => {
+        io.on("connection", async (socket) => {
             
 
 
@@ -37,9 +37,9 @@ const initializeSocket = (server, sessionMiddleWare) => {
             console.log("[connection] socket received session id:", id)
             console.log("socket session:", socket.request?.session)
 
-            const result = await extend_session(socket, id)
+            const session = await extend_session(socket, id)
                 
-            if (result) {
+            if (session) {
                         
                         // get user data
                         // test user
@@ -62,7 +62,7 @@ const initializeSocket = (server, sessionMiddleWare) => {
 
             }
       
-        }, socket, cb)
+        }, socket)
 
 
    })
