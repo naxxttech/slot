@@ -46,6 +46,8 @@ const create_game_history = async (data, extra) => {
         const history = new model(entries)
         await history.save()
 
+        return history._id
+
     } catch (error) {
         
         console.log("Error while creating game history:", error)

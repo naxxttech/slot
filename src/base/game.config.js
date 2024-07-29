@@ -344,7 +344,8 @@ class Game {
         }
 
         // create game history
-        await create_game_history(data, { gameId: this.gameId, userId: this.user, requestedLines: this.requestedLines, bet: this.bet})
+        const history = await create_game_history(data, { gameId: this.gameId, userId: this.user, requestedLines: this.requestedLines, bet: this.bet})
+        data.historyId = history
         return data
     
    
