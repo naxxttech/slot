@@ -1,12 +1,31 @@
 const socket = require("socket.io")
+const path = require('node:path');
+const fs = require('node:fs');
+
 // events
+const collect = require("./events/collect");
 const spin = require("./events/spin")
 const balance = require("./events/balance")
 const disconnect = require("./events/disconnect")
 const extend_session = require("./helpers/extend.session")
 const handleErrorsIfAny = require("./helpers/handle.socket.errors")
-const { get_game_history } = require("../db/models/GameHistory")
+const { get_game_history } = require("../db/models/GameHistory");
 
+
+
+
+
+const eventsPath = path.join(__dirname, 'events');
+const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
+
+for (const file of eventFiles) {
+	const filePath = path.join(eventsPath, file);
+	const event = require(filePath);
+
+
+		//client.on(event.name, (...args) => event.execute(...args));
+	
+}
 
 const initializeSocket = (server, sessionMiddleWare) => {
         // socket config
@@ -29,7 +48,7 @@ const initializeSocket = (server, sessionMiddleWare) => {
         // events
         io.on("connection", async (socket) => {
             
-
+          console.log("event:", eventFiles)
 
           await handleErrorsIfAny(async () => {
 
@@ -58,6 +77,7 @@ const initializeSocket = (server, sessionMiddleWare) => {
                         socket.emit("userData", user_data)
                         //  balance(socket)
                         spin(socket)
+                        collect(socket)
                         disconnect(socket)
 
             }
