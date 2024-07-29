@@ -28,6 +28,7 @@ class Game {
 
     async pay(type, betAmount) {
 
+
         const baseURL = process.env["BETAPI"]
         const { playerId, sessionId } = this.user
 
