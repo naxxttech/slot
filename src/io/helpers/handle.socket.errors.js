@@ -11,13 +11,20 @@ const handleErrorsIfAny = async (fn, socket, cb) => {
 
     } catch (error) {
       console.error('An error occured in socket:', error.message);
-       // socket.emit('error', { message: error.message });
       response_object.status = false 
       response_object.message = error.message
       
-      cb?.(response_object)
+      if (!cb) {
+        
+        socket.disconnect(true);
+      
+      } else {
 
-      // socket.disconnect(true);
+        cb(response_object)
+      }
+
+
+
     
     }
   };
