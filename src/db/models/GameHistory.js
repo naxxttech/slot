@@ -28,12 +28,12 @@ const create_game_history = async (data, extra) => {
 
     try {
 
-        const { win, winType, winningPaylines, cells, totalPayout } = data
+        const { status, winningPaylines, cells, totalPayout } = data
         const { gameId, userId, requestedLines, bet } = extra
         
         const entries = {
 
-            win: winType,
+            win: status,
             game_id: gameId,
             user_id: userId,
             cells,
@@ -54,6 +54,24 @@ const create_game_history = async (data, extra) => {
 }
 
 
+const update_game_history = async (_id) => {
+
+    try {
+        
+        const history = await model.findById({_id: _id})
+        history.win = "collected"
+        await history.save()
+
+        return history.win
+
+    } catch (error) {
+
+        console.log("Error while updating game history:", error)
+        throw error
+    }
+
+
+}
 
 const get_game_history = async (gameId) => {
 
@@ -73,4 +91,7 @@ const get_game_history = async (gameId) => {
 }
 
 
-module.exports = { create_game_history, get_game_history }
+
+
+
+module.exports = { create_game_history, get_game_history, update_game_history }
