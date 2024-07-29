@@ -7,6 +7,8 @@ const { symbols, paylines, payTable } = require("./default.config")
 const { create_game_history } = require("../db/models/GameHistory")
 
 
+let test_price = 54232
+
 class Game {
 
     constructor(gameId, user, bet) {
@@ -26,9 +28,22 @@ class Game {
     }
 
 
-    async pay(type, betAmount) {
+    async pay(winType, betAmount) {
 
+        const response = { code: 200, BalanceBefore: test_price }
 
+        if (winType === "win") {
+
+            // test_price += betAmount
+
+        } else if (winType === "lose") {
+            
+            test_price -= betAmount
+        }
+
+        response.balance = test_price
+        return response
+        /*
         const baseURL = process.env["BETAPI"]
         const { playerId, sessionId } = this.user
 
@@ -38,13 +53,13 @@ class Game {
         console.log("This is", type)
         console.log("API RESULT:", new_api_request)
         return new_api_request
-    
+        */
     }
 
 
     async check_user_balance() {
  
-           return { code: 200, message: null, resource: { Amount: 54232} }
+           return { code: 200, message: null, resource: { Amount: test_price} }
 
            const { playerId, sessionId } = this.user
            const betAPI = process.env["BETAPI"]
@@ -319,16 +334,15 @@ class Game {
         // add user's balance into response object
         const payment_object = await this.pay(data.winType, this.bet)
         
-        const { code } = payment_object
+        const { code, BalanceBefore, BalanceAfter } = payment_object
 
         if (code === 200) {
 
-            const { BalanceBefore, BalanceAfter } = payment_object.resource
+            // const { BalanceBefore, BalanceAfter } = payment_object.resource
                 
-            data.user = {
+            data.balance = {
 
-                id: this.user.playerId,
-                balance: BalanceAfter
+                BalanceBefore
             }
 
         }
