@@ -7,7 +7,8 @@ const collect = require("./events/collect");
 const spin = require("./events/spin")
 const balance = require("./events/balance")
 const disconnect = require("./events/disconnect")
-const gambleChosed = require("./events/gamble");
+const triggerGamble = require("./events/gamble");
+const playGamble = require("./events/playGamble");
 
 // helpers
 const extend_session = require("./helpers/extend.session")
@@ -82,7 +83,8 @@ const initializeSocket = (server, sessionMiddleWare) => {
                         //  balance(socket)
                         spin(socket)
                         collect(socket)
-                        gambleChosed(socket)
+                        triggerGamble(socket)
+                        playGamble(socket)
                         disconnect(socket)
 
             }
