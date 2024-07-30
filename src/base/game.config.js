@@ -353,7 +353,7 @@ class Game {
             BalanceBefore
         }
 
-        return data
+        return { history: data, balance: { BalanceBefore}}
     }
 
 }
