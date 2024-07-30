@@ -66,7 +66,7 @@ const update_game_history = async (_id) => {
         history.status = "collected"
         await history.save()
 
-        return history.win
+        return history.status
 
     } catch (error) {
 

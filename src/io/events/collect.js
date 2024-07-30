@@ -1,3 +1,4 @@
+const PaymentProcessor = require("../../base/payment.config")
 const { update_game_history } = require("../../db/models/GameHistory")
 const handleErrorsIfAny = require("../helpers/handle.socket.errors")
 
@@ -21,8 +22,16 @@ const collect = (socket) => {
             throw new Error("EntryId is required")
         }
 
-        const result = await update_game_history(entryId)
+        const operationResult = await update_game_history(entryId)
 
+        const { user_id } = socket.request.session
+        
+        const balance = new PaymentProcessor()
+        const userBalance = await balance.checkUserBalance(user_id)
+
+        return { status: operationResult, balance: userBalance}
+
+     
 
     }, socket, cb)
 
