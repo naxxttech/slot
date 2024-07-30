@@ -22,7 +22,7 @@ const collect = (socket) => {
             throw new Error("EntryId is required")
         }
 
-        const operationResult = await update_game_history(entryId)
+        const operationResult = await update_game_history(entryId, "collect")
 
         const { user_id } = socket.request.session
         
