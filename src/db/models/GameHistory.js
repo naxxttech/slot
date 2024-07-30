@@ -91,7 +91,7 @@ const update_game_history = async (_id, action) => {
 
         switch (action) {
 
-            case "gambe":
+            case "gamble":
                 history.status = types.GAMBLE
                 break;
 
