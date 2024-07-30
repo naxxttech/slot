@@ -35,7 +35,7 @@ router.post("/create-session", secureAuth, async (request, response) => {
 
     const { bank, currency, id, name, nickname, externaltoken, gameid} = request.body
 
-    if (!bank || !currency || !id || !externaltoken || !gameid || !name) {
+    if (!bank || !currency || !id || !externaltoken || !gameid ) {
 
         response_object.msg = "Invalid or missing parameters."
         return response.status(400).json(response_object)
@@ -50,9 +50,7 @@ router.post("/create-session", secureAuth, async (request, response) => {
     }
 
     payload.user_id = id
-    payload.game_name = name
     delete payload.id
-    delete payload.name
 
 
     // do this user already have session? 
