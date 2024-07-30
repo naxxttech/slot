@@ -74,7 +74,7 @@ const initializeSocket = (server, sessionMiddleWare) => {
                         }
                         
                         // send user data such as game history, id etc.
-                        const game_history = await get_game_history({game_id: socket.request.session.gameid})
+                        const game_history = await get_game_history(socket.request.session.gameid)
                         user_data.history = game_history
                         
                         // will refactor those codes later.

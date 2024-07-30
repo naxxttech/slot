@@ -118,13 +118,13 @@ const update_game_history = async (_id, action) => {
 
 }
 
-const get_game_history = async (entries) => {
+const get_game_history = async (gameId) => {
 
 
     try {
 
         // şimdilik en son oyunları al
-        const history = await model.findOne({ entries }).sort({ _id: -1}).select("status cells winningPaylines totalPayout gamble")
+        const history = await model.findOne({ game_id: gameId }).sort({ _id: -1}).select("status cells winningPaylines totalPayout gamble")
 
         return history
 
