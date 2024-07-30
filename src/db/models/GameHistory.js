@@ -1,11 +1,24 @@
 const mongoose = require("mongoose");
 
-const winTypes = ['win', 'lose', 'collected', 'gambleWin', 'gambleLose']
+//const winTypes = ['win', 'lose', 'collected', 'gambleWin', 'gambleLose']
+
+const winTypes = {
+
+    LOSE: 0,
+    WIN: 1,
+    COLLECTED: 2
+  };
+
+  const winTypesAsText = {
+    0: 'LOSE',
+    1: "WIN",
+    2: "COLLECTED"
+  };
 
 const GameHistorySchema = new mongoose.Schema({
 
     IP: { type: String },
-    status: { type: String, enum: { values: winTypes, message: '{VALUE} is not a valid enum'}, required: true },
+    status: { type: Number, enum: { values: Object.values(winTypes), message: '{VALUE} is not a valid enum'}, required: true },
     game_id: { type: String, required: true},
     user_id: { type: String, required: true },
     user_name: { type: String},
@@ -20,6 +33,13 @@ const GameHistorySchema = new mongoose.Schema({
 })
 
 
+// virtuals
+GameHistorySchema.virtual('statusText')
+  .get(function() {
+    return winTypesAsText[this.status];
+  });
+
+
 const model = mongoose.model('Game History', GameHistorySchema);
 
 
@@ -31,9 +51,11 @@ const create_game_history = async (data, extra) => {
         const { status, winningPaylines, cells, totalPayout } = data
         const { gameId, userId, requestedLines, bet } = extra
         
+        const statusAsEnum = winTypes[status.toUpperCase()];
+
         const entries = {
 
-            status: status,
+            status: statusAsEnum,
             game_id: gameId,
             user_id: userId,
             cells,
@@ -63,7 +85,7 @@ const update_game_history = async (_id) => {
     try {
         
         const history = await model.findById({_id: _id})
-        history.status = "collected"
+        history.status = winTypes.COLLECTED
         await history.save()
 
         return history.status
