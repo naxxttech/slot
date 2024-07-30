@@ -16,7 +16,6 @@ const SessionSchema = new Schema({
     user_nickname: { type: String },
     externaltoken: { type: String, required: true},
     gameid: { type: String, required: true},
-    game_name: { type: String, required: true},
     expiredAt: { type: Date, default: new Date(Date.now() + 20 * 60 * 1000) }
 }, {
     timestamps: true
