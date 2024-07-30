@@ -2,8 +2,9 @@ const crypto = require('crypto');
 
 class RNG {
 
-    constructor(symbols) {
+    constructor(symbols, cardTypes) {
         this.symbols = symbols;
+        this.cardTypes = cardTypes
     }
 
 
@@ -12,9 +13,17 @@ class RNG {
          * @returns {Object} - Rastgele sembol
      */
     getRandomSymbol() {
+
         const index = this.getRandomInteger(0, this.symbols.length);
-        console.log("index:", index)
-        return symbols[index];
+        const card = this.symbols[index]
+
+        if (this.cardTypes) {
+
+            const cardTypeIndex = Math.floor(Math.random() * this.cardTypes.length)
+            card.color = cardTypeIndex
+        }
+
+        return this.symbols[index];
     }
 
 
