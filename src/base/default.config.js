@@ -15,6 +15,14 @@ const symbols  = [
 ];
 
 
+const gamble_symbols = [
+
+    { id: 1, name: "Club"},
+    { id: 2, name: "Diamond"},
+    { id: 3, name: "Heart"},
+    { id: 4, name: "Spade"},
+]
+
         
 // static PT for now
 const starter_value = { x2: 3, x3: 5, x4: 7, x5: 10}
@@ -97,4 +105,4 @@ const paylines = [
 
 
 
- module.exports = { symbols, paylines, payTable }
+ module.exports = { symbols, paylines, payTable, gamble_symbols }
