@@ -63,7 +63,7 @@ const update_game_history = async (_id) => {
     try {
         
         const history = await model.findById({_id: _id})
-        history.win = "collected"
+        history.status = "collected"
         await history.save()
 
         return history.win
