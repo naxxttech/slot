@@ -97,13 +97,16 @@ const update_game_history = async (_id, action) => {
 
             case "win":
                 history.status = types.WIN
-
+                break;
+                
             case "lose":
                 history.status = types.LOSE
-
+                break;
+                
             case "collect":
                 history.status = types.COLLECTED
-        }
+                break;
+            }
 
         await history.save()
 
