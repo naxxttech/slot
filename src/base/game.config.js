@@ -345,10 +345,15 @@ class Game {
 
         // create game history
         const history = await create_game_history(data, { gameId: this.gameId, userId: this.user, requestedLines: this.requestedLines, bet: this.bet})
-        data.history = { _id: history }
+
+        // will change later
+        data = history
+        // balanceyide gönder.
+        data.balance = {
+            BalanceBefore
+        }
+
         return data
-    
-   
     }
 
 }

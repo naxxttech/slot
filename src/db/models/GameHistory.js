@@ -5,7 +5,7 @@ const winTypes = ['win', 'lose', 'collected', 'gambleWin', 'gambleLose']
 const GameHistorySchema = new mongoose.Schema({
 
     IP: { type: String },
-    win: { type: String, enum: { values: winTypes, message: '{VALUE} is not a valid enum'}, required: true },
+    status: { type: String, enum: { values: winTypes, message: '{VALUE} is not a valid enum'}, required: true },
     game_id: { type: String, required: true},
     user_id: { type: String, required: true },
     user_name: { type: String},
@@ -33,7 +33,7 @@ const create_game_history = async (data, extra) => {
         
         const entries = {
 
-            win: status,
+            status: status,
             game_id: gameId,
             user_id: userId,
             cells,
@@ -46,7 +46,9 @@ const create_game_history = async (data, extra) => {
         const history = new model(entries)
         await history.save()
 
-        return history._id
+        const instance = model.findById(history._id).select("-__v -bet -requestedLines -totalPayout")
+
+        return instance
 
     } catch (error) {
         
