@@ -42,7 +42,7 @@ const initializeSocket = (server, sessionMiddleWare) => {
                           
                             if (event.name && socket.connected) {
 
-                                console.log(event.name, "event is active")
+                                // console.log(event.name, "event is active")
                                 socket.on(event.name, (data, cb) => handleErrorsIfAny(() => event.exe(socket, data, cb), socket, cb));
               
                           }
