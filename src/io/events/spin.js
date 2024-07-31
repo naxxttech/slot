@@ -1,14 +1,11 @@
 const SlotGame = require("../../base/game.config")
 const extend_session = require("../helpers/extend.session")
-const handleErrorsIfAny = require("../helpers/handle.socket.errors")
 
 
-const handleSpin = (socket) => {
+module.exports = {
 
-
-    socket.on("spin", async (data, cb) => {
-        
-        await handleErrorsIfAny(async () => {
+    name: "spin",
+    exe: async (socket, data, cb) => {
 
         console.log("SPIN RECEIVED:", data, "socket ID:", socket.request.session)
 
@@ -30,10 +27,5 @@ const handleSpin = (socket) => {
         const roundResult = await round.start_game(requestedLines)
             
         return roundResult
-    }, socket, cb)
-
- })
+    }
 }
-
-
-module.exports = handleSpin

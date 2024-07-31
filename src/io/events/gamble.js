@@ -1,27 +1,16 @@
 const { update_game_history } = require("../../db/models/GameHistory")
-const handleErrorsIfAny = require("../helpers/handle.socket.errors")
 
 
-const triggerGamble = (socket) => {
 
+module.exports = {
+    
+    name: "gamble",
+    exe: async (socket, data, cb) => {
 
-    socket.on("canGamble", async (data, cb) => {
+        const { entryId } = data
+
+        const operationResult = await update_game_history(entryId, "gamble")
         
-         handleErrorsIfAny(async () => {
-
-         const { entryId } = data
-
-         const operationResult = await update_game_history(entryId, "gamble")
-         
-         return { status: operationResult }
-
-     
-
-        }, socket, cb)
-
- })
+        return { status: operationResult }
+    }
 }
-
-
-
-module.exports = triggerGamble

@@ -1,20 +1,13 @@
 const PaymentProcessor = require("../../base/payment.config")
 const { update_game_history } = require("../../db/models/GameHistory")
-const handleErrorsIfAny = require("../helpers/handle.socket.errors")
 
 
-const collect = (socket) => {
+module.exports = {
 
-
-    socket.on("collect", async (data, cb) => {
-        
-        await handleErrorsIfAny(async () => {
+    name: "collect",
+    exe: async (socket, data, cb) => {
 
         console.log("COLLECT RECEIVED:", data, "socket ID:", socket.request.session)
-
-        // const { id, user_id, gameid } = socket.request.session
-
-
 
         const { entryId } = data
 
@@ -31,13 +24,5 @@ const collect = (socket) => {
 
         return { status: operationResult, balance: userBalance}
 
-     
-
-    }, socket, cb)
-
- })
+    }
 }
-
-
-
-module.exports = collect

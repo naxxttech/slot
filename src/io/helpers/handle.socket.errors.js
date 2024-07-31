@@ -5,7 +5,6 @@ const handleErrorsIfAny = async (fn, socket, cb) => {
     try {
       
       const triggered_function_response = await fn();
-
       response_object.data = triggered_function_response
       cb?.(response_object)
 
