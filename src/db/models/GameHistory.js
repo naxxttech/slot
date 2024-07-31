@@ -121,14 +121,30 @@ const update_game_history = async (_id, action) => {
 
 }
 
-const get_game_history = async (gameId) => {
+const get_game_history = async (query, userId) => {
 
 
     try {
 
-        // şimdilik en son oyunları al
-        const history = await model.findOne({ game_id: gameId }).sort({ _id: -1}).select("status cells winningPaylines totalPayout gamble")
+        let searchOptions = {}
 
+        if (mongoose.Types.ObjectId.isValid(query)) {
+
+            searchOptions._id = query;
+
+        } else {
+
+            searchOptions.game_id = query;
+
+            if (userId) {
+
+                searchOptions.user_id = userId
+            }
+        }
+
+
+        // şimdilik en son oyunları al
+        const history = await model.findOne(searchOptions).sort({ _id: -1}).select("status cells winningPaylines totalPayout gamble")
         return history
 
     } catch (error) {
@@ -141,5 +157,4 @@ const get_game_history = async (gameId) => {
 
 
 
-
-module.exports = { create_game_history, get_game_history, update_game_history }
+module.exports = { create_game_history, get_game_history, update_game_history, types }

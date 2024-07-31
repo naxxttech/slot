@@ -6,7 +6,7 @@ class PaymentProcessor {
 
     async checkUserBalance(userId) {
     
-        return await this.connect_to_payment_service(userId)
+        return await this.connect_to_payment_service({userId}, "getBalance")
         
       }
 
@@ -14,18 +14,43 @@ class PaymentProcessor {
 
     async pay(userId, amount) {
 
-      
+        return await this.connect_to_payment_service({amount, userId, multiplier: 2 }, "payUser")
     }
 
 
-    async connect_to_payment_service(payload) {
+    async charge(userId, amount) {
+
+        return await this.connect_to_payment_service({ amount, userId}, "chargeUser")
+    }
+
+    async connect_to_payment_service(payload, action) {
 
         try {
             
+            const defaultUserBalance = 4500
             const { amount, userId } = payload
+            
+            let response = {}
+
             // api request
             // test data for now
-            return { balanceBefore: 4500}
+            switch(action) {
+
+                case "getBalance":
+                response = { balanceBefore: defaultUserBalance }
+                break;
+
+                case "payUser":
+                response = { balanceBefore: defaultUserBalance, balanceAfter: 4800 }
+                break;
+
+                case "chargeUser":
+                response = { balanceBefore: defaultUserBalance, balanceAfter: amount }
+                break;
+            }
+       
+
+            return response
 
         } catch (error) {
             
