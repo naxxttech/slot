@@ -47,7 +47,7 @@ module.exports = {
                 const new_entry = { 
                     guess: cardTypes[pickedCard], 
                     result: cardTypes[card.color],
-                    cardId: cardTypes[card.color].id,
+                    cardId: card.id,
                     playedAt: currentDate
                 };
 
