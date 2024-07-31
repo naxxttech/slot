@@ -1,4 +1,5 @@
 const { get_game_history } = require("../../db/models/GameHistory");
+const { get_session } = require("../../db/models/Session");
 const extend_session = require("./extend.session");
 
 module.exports = {
@@ -13,22 +14,39 @@ module.exports = {
             console.log("[connection] socket received session id:", id);
             console.log("socket session:", socket.request?.session);
 
-            const session = await extend_session(socket, id);
+            const session = await get_session(id)
 
-            if (session) {
-                // get user data
-                const user_data = {
-                    user_id: socket.request.session.user_id,
-                    user_nickname: socket.request.session.user_nickname || "Random Test User",
-                    currency: socket.request.session.currency,
-                    balance: 1421
-                };
+            const { resource } = session
+            const { expiredAt } = resource
 
-                // send user data such as game history, id etc.
-                const game_history = await get_game_history(socket.request.session.gameid, user_data.user_id);
-                user_data.history = game_history;
+            const currentDate = new Date();
+
+            if (new Date(expiredAt) < currentDate) {
+
+                // throw new Error(`[Socket] Session: ${id} is expired.`)
             }
+     
 
+            // get user data
+            const user_data = {
+
+                    id: id,
+                    user_id: resource.user_id,
+                    user_nickname: resource.user_nickname || "Random Test User",
+                    gameid: resource.gameid,
+                    currency: resource.currency,
+                    balance: 1421
+            };
+
+
+            socket.request.session = user_data
+            socket.emit("userData", user_data)
+            // send user data such as game history, id etc.
+            const game_history = await get_game_history(socket.request.session.gameid, user_data.user_id);
+            user_data.history = game_history;
+            
+            // extend session
+            // await extend_session(socket, id);
             
         } catch (error) {
                     
