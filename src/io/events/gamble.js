@@ -4,7 +4,7 @@ const { update_game_history } = require("../../db/models/GameHistory")
 
 module.exports = {
     
-    name: "gamble",
+    name: "canGamble",
     exe: async (socket, data, cb) => {
 
         const { entryId } = data
