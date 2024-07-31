@@ -39,7 +39,7 @@ module.exports = {
             };
 
 
-            socket.request.session = user_data
+         
             socket.emit("userData", user_data)
             // send user data such as game history, id etc.
             const game_history = await get_game_history(socket.request.session.gameid, user_data.user_id);
@@ -47,6 +47,7 @@ module.exports = {
             
             // extend session
             // await extend_session(socket, id);
+            socket.request.session = user_data
             
         } catch (error) {
                     
