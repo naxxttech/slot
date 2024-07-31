@@ -23,9 +23,9 @@ const handleErrorsIfAny = async (fn, socket, cb) => {
       }
 
 
-
-    
+      return error
     }
+
   };
 
 
